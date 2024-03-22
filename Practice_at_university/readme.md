@@ -1,0 +1,1 @@
+Here are some exercises related to my master's course at the University of Tampere. It mainly includes signal processing, machine learning, natural language processing, computer vision and image processing.
