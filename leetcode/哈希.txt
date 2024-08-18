@@ -1,0 +1,273 @@
+#有效的字母异位词：找出字母相同但是排列顺序不同的词
+class Solution(object):
+    def isAnagram(self, s, t):
+        """
+        :type s: str
+        :type t: str
+        :rtype: bool
+        """
+        #这里构建一个字母数组
+        record = [0]*26
+        for i in s:
+            #该ord()函数返回代表指定字符的 Unicode 代码的数字。 index就代表第几个字母
+            record[ord(i) - ord("a")] +=1
+        for j in t:
+            record[ord(j)-ord("a")]-=1
+        for i in record:
+            if i != 0:
+                return False
+        return True
+
+#所有在 words 的每个字符串中都出现的共用字符（ 包括重复字符）
+#自己用np写了一版不包括重复字符的
+import numpy as np
+class Solution(object):
+    def commonChars(self, words):
+        """
+        :type words: List[str]
+        :rtype: List[str]
+        """
+        n = len(words)
+#不可以[[0]*26]*n
+        record = np.zeros((n, 26), dtype=np.int)
+        j=0
+        for word in words:
+            for i in word:
+                record[j][ord(i) - ord("a")] = 1
+            j +=1
+        s = np.sum(record,axis=0)
+        index = np.where(s==n)
+        re = []
+        print(index[0])
+        for i in index[0]:
+            #chr i+97 是小写字母 +65是大写字母
+            re.append(chr(i+97))
+        return re
+#包括重复字符的
+
+class Solution(object):
+    def commonChars(self, words):
+        """
+        :type words: List[str]
+        :rtype: List[str]
+        """
+        if not words: return
+        n = len(words)
+        #使用第一个单词初始化最小字符频率表h
+        h = [0]*26
+        for i in words[0]:
+            h[ord(i)-ord("a")]+=1
+   
+        for i in range(1,n):
+            #每个单词使用新的表统计字符频率，和h进行比较
+            oh = [0]*26
+            for j in words[i]:
+                oh[ord(j)-ord("a")]+=1
+            for k in range(26):
+	#维持h最小
+                h[k] = min(oh[k],h[k])
+        re = []
+        
+        for i in range(26):
+            #因为字符可以重复，所以要减到0
+            while h[i] > 0:
+                re.extend(chr(i+ord("a"))) #append和extend这里是一样的
+                h[i]-=1
+        return re
+#两个数组的交集
+class Solution(object):
+    def intersection(self, nums1, nums2):
+        """
+        :type nums1: List[int]
+        :type nums2: List[int]
+        :rtype: List[int]
+        
+        #最简洁的解法：这里&表示相交
+        #return list(set(nums1) & set(nums2))
+	#第二种用字典和set结合
+        tab = {}
+        for n in nums1:
+            #这里的get(n,0)意思是get key为n的值，若n还不是key，则返回0
+            tab[n] =  tab.get(n,0)+1
+        re  = set()
+        for n in nums2:
+            if n in tab:
+                re.add(n)
+	#返回时要保证格式
+        return list(re)
+        """
+        s1 = set(nums1)
+        s2 = set(nums2)
+        re = set()
+        for n in nums1:
+            if n in nums2:
+                re.add(n)
+
+        return list(re)
+#判断是否快乐数，解释https://github.com/youngyangyang04/leetcode-master/blob/master/problems/0202.%E5%BF%AB%E4%B9%90%E6%95%B0.md
+#这个关键在于是否陷入死循环，即和是否重复出现
+class Solution(object):
+    def isHappy(self, n):
+        """
+        :type n: int
+        :rtype: bool
+        """
+	#定义求和方法
+        def getsum(n):
+            sum = 0
+            while n!=0:
+	#这里用对10取余求平方，迭代除以10，即可对数字的每一位求和
+                sum+=(n%10)*(n%10)
+                n /=10
+            return sum
+        s = set()
+        while 1 not in s:
+            if getsum(n) not in s:
+
+                s.add(getsum(n))
+                n = getsum(n)
+            else:
+                return False
+        return True
+#两数之和：找到数组中两个元素和为target的index
+ class Solution(object):
+    def twoSum(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: List[int]
+        """
+	#构建字典，key是数，value是index
+        s = dict()
+        for n in range(len(nums)):
+	#关键思想在于逆向思考，寻找已有元素是否存在target和当前元素的差
+            aim = target-nums[n]
+            if aim in s:
+                return [s.get(aim),n]
+            s[nums[n]]=n
+        return 
+#第454题.四数相加II：https://github.com/youngyangyang04/leetcode-master/blob/master/problems/0454.%E5%9B%9B%E6%95%B0%E7%9B%B8%E5%8A%A0II.md
+#找出四个数组中各取一个元素和为0的组合数
+#核心在于构建一个字典存放前两个的和，v为和出现的次数
+#然后在字典中找0-后两个的和是否存在，存在则计入count即可
+class Solution(object):
+    def fourSumCount(self, nums1, nums2, nums3, nums4):
+        """
+        :type nums1: List[int]
+        :type nums2: List[int]
+        :type nums3: List[int]
+        :type nums4: List[int]
+        :rtype: int
+        """
+	
+        d1 = dict()
+        n = len(nums1)
+        for i in range(n):
+            for j in range(n):
+	#这个dict.get(key,0)+1的操作很经典了
+                d1[nums1[i]+nums2[j]] = d1.get(nums1[i]+nums2[j],0)+1
+        count = 0
+        for i in range(n):
+            for j in range(n):
+                if 0-(nums3[i]+nums4[j]) in d1:
+                    count+= d1.get( 0-(nums3[i]+nums4[j]))
+        return count
+#383. 赎金信 判断第二个字符串中是否包含组成第一个字符串的所有字符
+class Solution(object):
+    def canConstruct(self, ransomNote, magazine):
+        """
+        :type ransomNote: str
+        :type magazine: str
+        :rtype: bool
+        """
+        d1 = dict()
+        d2 = dict()
+        for i in ransomNote:
+            d1[i] = d1.get(i,0)+1
+        for i  in magazine:
+            d2[i] = d2.get(i,0)+1
+        for i in d1:
+            if i not in d2 :
+                return False
+            elif d1.get(i) > d2.get(i):
+                return False
+        return True
+#一个字典也行
+class Solution:
+    def canConstruct(self, ransomNote: str, magazine: str) -> bool:
+        counts = {}
+        for c in magazine:
+            counts[c] = counts.get(c, 0) + 1
+        for c in ransomNote:
+            if c not in counts or counts[c] == 0:
+                return False
+            counts[c] -= 1
+        return True
+# 三数之和 https://github.com/youngyangyang04/leetcode-master/blob/master/problems/0015.%E4%B8%89%E6%95%B0%E4%B9%8B%E5%92%8C.md
+#难的
+class Solution(object):
+    def threeSum(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        """
+       
+        result = []
+        nums.sort()
+        # 找出a + b + c = 0
+        # a = nums[i], b = nums[j], c = -(a + b)
+        for i in range(len(nums)):
+            # 排序之后如果第一个元素已经大于零，那么不可能凑成三元组
+            if nums[i] > 0:
+                break
+            if i > 0 and nums[i] == nums[i - 1]: #三元组元素a去重
+                continue
+            d = {}
+            for j in range(i + 1, len(nums)):
+                if j > i + 2 and nums[j] == nums[j-1] == nums[j-2]: # 三元组元素b去重
+                    continue
+                c = 0 - (nums[i] + nums[j])
+                if c in d:
+                    result.append([nums[i], nums[j], c])
+                    d.pop(c) # 三元组元素c去重
+                else:
+                    d[nums[j]] = j
+        return result
+#利用四数之和的通解可以完成，但是leetcode上会超时，但是无所谓，就这个吧
+d = dict()
+        for n in nums:
+            d[n]= d.get(n,0)+1
+        r = set()
+        n = len(nums)
+        for i in range(n):
+            for j in range(i+1,n):
+                c = 0-(nums[i]+nums[j])
+	#注意这里是看c是否和前两个数相等然后去判断
+                count = (c==nums[i])+(c==nums[j])
+                if d.get(c)>count:
+                    r.add(tuple(sorted([nums[i],nums[j],c])))
+        return [list(i) for i in r]
+#0018.四数之和.md
+#用字典记录频率，用来判断重复度
+#用set存储元组
+ class Solution(object):
+    def fourSum(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: List[List[int]]
+        """
+        d = {}
+        for n in nums:
+            d[n] = d.get(n,0)+1
+        r = set()
+        for i in range(len(nums)):
+            for j in range(i+1,len(nums)):
+                for k in range(j+1,len(nums)):
+                    c = target-(nums[i]+nums[j]+nums[k])
+                    count = (nums[i]==c)+(nums[j]==c)+(nums[k]==c)
+                    if d.get(c)>count:
+                        #这里用元组，排序，防止有重复的组合
+                        r.add(tuple(sorted([nums[i], nums[j], nums[k], c])))
+	#这个把set中的每个元组转化成数组传回结果
+        return [list(x) for x in r]      

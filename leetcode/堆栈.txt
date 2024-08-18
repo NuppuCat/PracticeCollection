@@ -1,0 +1,369 @@
+#队列只能先进先出，栈只能先进后出
+#232.用栈实现队列
+#只用append和pop两个函数操作
+#用pop删除队首元素
+#用push将元素放在队尾
+#要构建两个栈一个入栈，一个出栈。入栈负责增，出栈负责删与查
+class MyQueue(object):
+
+    def __init__(self):
+        self.i=[]
+        self.o = []
+
+    def push(self, x):
+        """
+        :type x: int
+        :rtype: None
+        """
+        self.i.append(x)
+
+
+    def pop(self):
+        """
+        :rtype: int
+        """
+        if self.empty():
+            return None
+        if self.o:
+	#出栈弹完才重新构建
+            return self.o.pop()
+        else:
+	#入栈要从尾部一个一个出，然后最初的一个在出栈的尾部
+            for i in range(len(self.i)):
+                self.o.append(self.i.pop())
+            return self.o.pop()
+
+    def peek(self):
+        """
+        :rtype: int
+        """
+        a = self.pop()
+	#peek弹了o的尾部，加回去就好了
+        self.o.append(a)
+        return a
+
+    def empty(self):
+        """
+        :rtype: bool
+        """
+	#用布尔判空，好办法
+        return not(self.i or self.o)
+
+
+# Your MyQueue object will be instantiated and called as such:
+# obj = MyQueue()
+# obj.push(x)
+# param_2 = obj.pop()
+# param_3 = obj.peek()
+# param_4 = obj.empty()
+
+#225. 用队列实现栈
+#
+class MyStack(object):
+
+    def __init__(self):
+#队列用deque双向队列
+        self.i =  deque()
+        self.o = deque()
+
+    def push(self, x):
+        """
+        :type x: int
+        :rtype: None
+        """
+        self.i.append(x)
+
+
+    def pop(self):
+        """
+        :rtype: int
+        """
+#i用来存储，o用来出
+#把i的最右一个留下放到出中即可
+        if self.empty():
+            return None
+        for i in range(len(self.i)-1):
+            self.o.append(self.i.popleft())
+        self.i,self.o = self.o,self.i
+        return self.o.popleft()
+
+    def top(self):
+        """
+        :rtype: int
+        """
+        a =self.pop()
+#注意这里要把弹出的存到进中，如果放到出中，顺序会乱，要保持最新的元素在存储的尾端
+#可以看到，其实o只充当一个临时弹出的容器，并不是必要的
+        self.i.append(a)
+        return a
+
+    def empty(self):
+        """
+        :rtype: bool
+        """
+        return not(self.i or self.o)
+
+
+
+# Your MyStack object will be instantiated and called as such:
+# obj = MyStack()
+# obj.push(x)
+# param_2 = obj.pop()
+# param_3 = obj.top()
+# param_4 = obj.empty()
+#用一个队列的解法
+class MyStack(object):
+
+    def __init__(self):
+        self.i =  deque()
+        
+
+    def push(self, x):
+        """
+        :type x: int
+        :rtype: None
+        """
+        self.i.append(x)
+
+
+    def pop(self):
+        """
+        :rtype: int
+        """
+        if self.empty():
+            return None
+#将队列重新排序，转了一圈后将原本队尾的元素放到队头，弹出即可
+        for i in range(len(self.i)-1):
+            self.i.append(self.i.popleft())
+        
+        return self.i.popleft()
+
+    def top(self):
+        """
+        :rtype: int
+        """
+#这里就更简单，弹了再存回去
+        a =self.pop()
+        self.i.append(a)
+        return a
+
+    def empty(self):
+        """
+        :rtype: bool
+        """
+        return not self.i
+
+
+
+# Your MyStack object will be instantiated and called as such:
+# obj = MyStack()
+# obj.push(x)
+# param_2 = obj.pop()
+# param_3 = obj.top()
+# param_4 = obj.empty()
+#20. 有效的括号
+#输入包含三种括号的字符串，判定是否正常闭合 
+#
+#
+class Solution(object):
+    def isValid(self, s):
+        """
+        :type s: str
+        :rtype: bool
+        """
+        st=[]
+        for i in s:
+	#思路是见到一个左括号，把右括号压栈，
+            if i == '(':
+                st.append(')')
+            elif i  == '[':
+                st.append(']')
+            elif i == '{':
+                st.append('}')
+	#见到非左括号判断栈是否空且栈顶是否和元素一致
+            elif not st or st[-1] != i:
+                return False
+	#如果非空且一致弹出顶端元素
+            else:
+                st.pop()
+               
+        #return True if not st else False 正则式
+        return True if not st else False
+## 方法二，使用字典
+class Solution:
+    def isValid(self, s: str) -> bool:
+        stack = []
+	#思路一致，用dict省去连环判定的过程
+        mapping = {
+            '(': ')',
+            '[': ']',
+            '{': '}'
+        }
+        for item in s:
+            if item in mapping.keys():
+                stack.append(mapping[item])
+            elif not stack or stack[-1] != item: 
+                return False
+            else: 
+                stack.pop()
+        return True if not stack else False
+
+#1047. 删除字符串中的所有相邻重复项
+#输入："abbaca"
+#输出："ca"
+class Solution(object):
+    def removeDuplicates(self, s):
+        """
+        :type s: str
+        :rtype: str
+        """
+        st = []
+        for i in s:
+	#构建一个栈，因为每次进一位，所以非空且顶端为同字符时弹一个，否则压一个
+            if st and st[-1]==i:
+                st.pop()
+            else:
+                st.append(i)
+	#注意这里数组转字符串用 ''.join(st)
+        return ''.join(st)
+
+#150. 逆波兰表达式求值
+#就是符号前面的两个数字执行符号的运算
+class Solution(object):
+    def evalRPN(self, tokens):
+        """
+        :type tokens: List[str]
+        :rtype: int
+        """
+        
+        n =[]
+        for t in tokens:
+            if t == '+':
+                b = n.pop()
+                a = n.pop()
+                n.append(a+b)
+            elif t == '-':
+                b = n.pop()
+                a = n.pop()
+                n.append(a-b)
+            elif t =='*':
+                b = n.pop()
+                a = n.pop()
+                n.append(a*b)
+            elif t=='/':
+                y = n.pop()
+                x = n.pop()
+	#这里注意
+	#在整除操作中，结果会向负无穷方向取整，因此：
+
+	#10//−3 结果是 -4 而不是 -3，因为它要向更小的整数取整。
+                n.append( int(x / y) if x * y > 0 else -(abs(x) // abs(y)))
+            else:
+	#也注意这里要转格式
+                n.append(int(t))
+        return n.pop()
+                   
+#相对优雅的方式
+#引入运算符
+from operator import add, sub, mul
+#定义除法
+def div(x, y):
+    # 使用整数除法的向零取整方式
+    return int(x / y) if x * y > 0 else -(abs(x) // abs(y))
+
+class Solution(object):
+#构建字典，用符号对应运算函数
+    op_map = {'+': add, '-': sub, '*': mul, '/': div}
+    
+    def evalRPN(self, tokens: List[str]) -> int:
+        stack = []
+        for token in tokens:
+            if token not in {'+', '-', '*', '/'}:
+                stack.append(int(token))
+            else:
+                op2 = stack.pop()
+                op1 = stack.pop()
+	#直接使用字典进行运算
+                stack.append(self.op_map[token](op1, op2))  # 第一个出来的在运算符后面
+        return stack.pop()
+  
+#239. 滑动窗口最大值
+#构建一个单调队列，在头上存放最大值
+class mq:
+	#初始函数要两个底杠： __init__(self)
+	#并且自定义方法都要加上self作为参数
+    def __init__(self):
+        self.queue= deque()
+	#当且仅当要弹出的是最大值时弹出（最大值维护在队左）
+    def pop(self,value):
+        if self.queue and value==self.queue[0]:
+            self.queue.popleft()
+	#这是精髓：入列时，假如新的元素大于队尾的元素则一直淘汰队尾的元素
+	#直到队左的元素比新入元素大
+	#这就是维持单调性的方法
+    def push(self,value):
+        while self.queue and self.queue[-1]<value:
+            self.queue.pop()
+        self.queue.append(value)
+	#定义一个返回最大值的也就是队首的方法
+    def fron(self):
+        return self.queue[0]
+
+
+class Solution(object):
+    def maxSlidingWindow(self, nums, k):
+        """
+        :type nums: List[int]
+        :type k: int
+        :rtype: List[int]
+        """
+        q= mq()
+	#先入k个
+        for i in range(k):
+            q.push(nums[i])
+        r =[]
+	#这里注意调用函数要加括号（）
+        r.append(q.fron())
+	#k到末尾一路爽过
+        for i in range(k,len(nums)):
+            q.pop(nums[i-k])
+            q.push(nums[i])
+            r.append(q.fron())
+        return r
+ 
+
+#347.前 K 个高频元素   
+#先用字典用元素存频率
+#再用字典用频率存元素
+#然后排序频率
+#将结果按频率存入
+class Solution(object):
+    def topKFrequent(self, nums, k):
+        """
+        :type nums: List[int]
+        :type k: int
+        :rtype: List[int]
+        """
+        d = {}
+	#元素频率字典
+        for n in nums:
+            d[n] = d.get(n,0)+1
+        di  = defaultdict(list)
+	#频率元素字典
+        for key in d.keys():
+            di[d.get(key)].append(key)
+        key = sorted(di.keys())
+        r = []
+        c = 0
+	#key不空且c《=k时
+        while key and c<=k:
+	#将频率最高的元素们放入结果池
+            r+=di[key[-1]]
+	#计数加上放入的元素个数
+            c+=len(di[-1])
+	#弹出末尾的元素
+            key.pop()
+	#返回前k个
+        return r[:k]
+
+        

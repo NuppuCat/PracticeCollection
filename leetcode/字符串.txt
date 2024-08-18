@@ -1,0 +1,98 @@
+#反转字符串，使用O（1）的额外空间
+class Solution(object):
+    def reverseString(self, s):
+        """
+        :type s: List[str]
+        :rtype: None Do not return anything, modify s in-place instead.
+        #这里使用python库函数,直接反转
+        s[:] = reversed(s) 或 s.reverse()
+        #使用切片
+        s[:] = s[::-1]
+        """
+        l = 0 
+        r = len(s)-1
+        while l<r:
+            #同时进行赋值
+            s[l], s[r] = s[r],s[l]
+            l +=1
+            r -=1
+#反转字符串2：给定一个字符串 s 和一个整数 k，从字符串开头算起, 每计数至 2k 个字符，就反转这 2k 个字符中的前 k 个字符。
+
+#如果剩余字符少于 k 个，则将剩余字符全部反转。
+
+#如果剩余字符小于 2k 但大于或等于 k 个，则反转前 k 个字符，其余字符保持原样。
+class Solution(object):
+    def reverseStr(self, s, k):
+        """
+        :type s: str
+        :type k: int
+        :rtype: str
+        """
+        n = len(s)
+        i = 0
+       #上下界是唯一需要注意的，另外语法上需要注意符号[::-1]这个操作等价于反转
+        while i<n:
+            p = i+k
+            s = s[:i] +s[i:p][::-1]+s[p:]
+            i = i+2*k
+        return s
+#151.翻转字符串里的单词 
+#输入: "the sky is blue"
+#输出: "blue is sky the"
+class Solution(object):
+    def reverseWords(self, s):
+        """
+        :type s: str
+        :rtype: str
+        
+        #可以用split（） 先分出单词再倒序
+        sa = s.split()
+        sa = sa[::-1]
+        #使用空格将单词连接
+        sr = ' '.join(sa)
+        return sr
+         """
+        #也可以先去头尾空格，再倒序字符串
+        s= s.strip()
+        s = s[::-1]
+        #最后拆分字符串把单词顺序倒回来再插入空格即可
+        return " ".join(word[::-1] for word in s.split())
+#实现 strStr()：
+#示例 1: 输入: haystack = "hello", needle = "ll" 输出: 2
+
+#示例 2: 输入: haystack = "aaaaa", needle = "bba" 输出: -1
+class Solution(object):
+    def strStr(self, haystack, needle):
+        """
+        :type haystack: str
+        :type needle: str
+        :rtype: int
+        #函数
+        return haystack.find(needle)
+        #try catch
+        try:
+            return haystack.index(needle)
+        except ValueError:
+            return -1
+        """
+        r = -1
+        for i in range(len(haystack)):
+            if haystack[i]!=needle[0]:
+                continue
+            elif haystack[i:i+len(needle)] != needle:
+                continue
+            else:
+                r=i
+                return r
+        return r
+#字符串是否由重复的子字符串构成 459.重复的子字符串
+class Solution(object):
+    def repeatedSubstringPattern(self, s):
+        """
+        :type s: str
+        :rtype: bool
+        """
+        #如果一个字符串是这样的结构，那么把两个它去掉头尾拼在一起还是能找到原字符串的
+        ss = s[1:]+s[:-1]
+        i = ss.find(s)
+        return i!=-1

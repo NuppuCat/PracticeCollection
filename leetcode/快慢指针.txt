@@ -1,0 +1,253 @@
+#移除元素：数组中出现过，但是理解不深
+#原地移除数组中值为val的元素
+class Solution(object):
+    def removeElement(self, nums, val):
+        """
+        :type nums: List[int]
+        :type val: int
+        :rtype: int
+        """
+        n = len(nums)
+        fast = 0
+        slow = 0
+        #以快指针遍历数组，满指针存储非val值
+        while fast!=n:
+            if val !=nums[fast]:
+	#这里可以直接覆盖，因为快指针遍历过了，把非val值覆盖到前k位，返回k即可
+                nums[slow]= nums[fast]
+                slow+=1
+            fast+=1
+        return slow
+#原地反转字符串
+class Solution(object):
+    def reverseString(self, s):
+        """
+        :type s: List[str]
+        :rtype: None Do not return anything, modify s in-place instead.
+        l = 0
+        r = len(s)-1
+        while r>l:
+            #同时赋值，然后一个加一个减，条件是r>l
+            s[l],s[r] = s[r],s[l]
+            l+=1
+            r-=1
+        return s
+        """
+        
+        return s.reverse()
+                
+#206.反转链表
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution(object):
+    def reverseList(self, head):
+        """
+        :type head: ListNode
+        :rtype: ListNode
+        """
+        #从head开始，因为head可能为空，不能从head.next开始
+        c = head
+        p = None
+        while c:
+            n = c.next
+            c.next = p
+            p = c
+            c = n
+        #返回的是p，因为最后c会变成None
+        return p        
+#0019.删除链表的倒数第N个节点.md
+#还是快的先走n步，慢的和快的同时走，快的到头，慢的跳过就好
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution(object):
+    def removeNthFromEnd(self, head, n):
+        """
+        :type head: ListNode
+        :type n: int
+        :rtype: ListNode
+        """
+        #必须使用假头，防止删除头节点
+        f = ListNode()
+        f.next =  head
+        l = f
+        r = l
+        #因为是倒数第n个，所以从0开始要含n，设为n+1
+        for i in range(n+1):
+            r = r.next
+        while r:
+            l = l.next
+            r = r.next
+        l.next = l.next.next
+        return f.next
+#面试题 02.07. 链表相交
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution(object):
+    def getIntersectionNode(self, headA, headB):
+        """
+        :type head1, head1: ListNode
+        :rtype: ListNode
+        """
+        la = 0
+        lb = 0
+        #这样定义
+        fakea = ListNode(next = headA)
+        while fakea.next:
+            la+=1
+            fakea = fakea.next
+        fakea = ListNode(next = headB)
+        while fakea.next:
+            lb+=1
+            fakea = fakea.next
+        n = la-lb
+        ca = headA
+        cb = headB
+        if n<0:
+	#注意这里需要加绝对值
+            for i in range(abs(n)):
+                cb = cb.next
+        else:
+            for i in range(n):
+                ca  =ca.next
+        while ca and cb:
+            if ca == cb:
+                return ca
+            ca = ca.next
+            cb = cb.next
+        return None
+
+#142.环形链表II
+#先用快慢指针找到交点，然后同速，相交的点就是入口
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution(object):
+    def detectCycle(self, head):
+        """
+        :type head: ListNode
+        :rtype: ListNode
+        """
+	#初始在head
+        f =head
+        
+        s =head
+        
+        while f and f.next:
+            f = f.next.next
+            s = s.next
+            if f==s:
+	#找到了第一个交点后s转回起点，同速相遇点即是入环点
+                s = head
+                while s!=f:
+                    s = s.next
+                    f = f.next
+                return s
+            
+        return None
+#第15题. 三数之和
+class Solution(object):
+    def threeSum(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        
+       
+        result = []
+        nums.sort()
+        # 找出a + b + c = 0
+        # a = nums[i], b = nums[j], c = -(a + b)
+        for i in range(len(nums)):
+            # 排序之后如果第一个元素已经大于零，那么不可能凑成三元组
+            if nums[i] > 0:
+                break
+            if i > 0 and nums[i] == nums[i - 1]: #三元组元素a去重
+                continue
+            d = {}
+            for j in range(i + 1, len(nums)):
+                if j > i + 2 and nums[j] == nums[j-1] == nums[j-2]: # 三元组元素b去重
+                    continue
+                c = 0 - (nums[i] + nums[j])
+                if c in d:
+                    result.append([nums[i], nums[j], c])
+                    d.pop(c) # 三元组元素c去重
+                else:
+                    d[nums[j]] = j
+        return result
+        d = dict()
+        for n in nums:
+            d[n]= d.get(n,0)+1
+        r = set()
+        n = len(nums)
+        for i in range(n):
+            for j in range(i+1,n):
+                c = 0-(nums[i]+nums[j])
+                count = (c==nums[i])+(c==nums[j])
+                if d.get(c)>count:
+                    r.add(tuple(sorted([nums[i],nums[j],c])))
+        return [list(i) for i in r]"""
+
+        d  = {}
+        for n in nums:
+            d[n]=d.get(n,0)+1
+        s = set()
+        n = len(nums)
+        for i in range(n):
+            for j in range(i+1,n):
+	#用0的差，查表中0的差出现的次数是否大于已出现的次数
+                su = 0-(nums[i]+nums[j])
+                c = (nums[i]==su)+(nums[j]==su)
+                if d.get(su,0)>c:
+	#注意这里用排序后的列表组成元组存入set，可以去重
+                    s.add(tuple(sorted([nums[i],nums[j],su])))
+        return [list(i) for i in s]
+#第18题. 四数之和
+class Solution(object):
+    def fourSum(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: List[List[int]]
+        
+        d = {}
+        for n in nums:
+            d[n] = d.get(n,0)+1
+        r = set()
+        for i in range(len(nums)):
+            for j in range(i+1,len(nums)):
+                for k in range(j+1,len(nums)):
+                    c = target-(nums[i]+nums[j]+nums[k])
+                    count = (nums[i]==c)+(nums[j]==c)+(nums[k]==c)
+                    if d.get(c)>count:
+                        
+                        r.add(tuple(sorted([nums[i], nums[j], nums[k], c])))
+        return [list(x) for x in r]"""
+	#和三数之和同理
+        d = {}
+        for n in nums:
+            d[n] = d.get(n,0)+1
+        s= set()
+        n = len(nums)
+        for i in range(n):
+            for j in range(i+1,n):
+	#这里注意是j+1的下界
+                for k in range(j+1,n):
+                    t = target-(nums[i]+nums[j]+nums[k])
+                    c = (nums[i]==t)+(nums[j]==t)+(nums[k]==t)
+                    if c<d.get(t):
+		#注意sorted（）函数中元素要构成数组
+                        s.add(tuple(sorted([nums[i],nums[j],nums[k],t])))
+        return [list(i) for i in s]
+                

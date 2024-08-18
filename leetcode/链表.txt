@@ -1,0 +1,251 @@
+#删除链表中值为val的元素
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution(object):
+    def removeElements(self, head, val):
+        """
+        :type head: ListNode
+        :type val: int
+        :rtype: ListNode
+        主要是对链表这个数据结构的理解，加一个虚拟头，返回一个地址作为真实头，其实任意的地址都是一个新的链表头	
+        """
+        fake = ListNode(next = head)
+        node  = fake
+        while node.next:
+            if node.next.val ==val:
+                node.next = node.next.next
+            else:
+                node = node.next
+        return fake.next
+
+#设计链表
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class MyLinkedList(object):
+
+    def __init__(self):
+        #设置假头
+        self.dummy_head = ListNode()
+        self.size = 0
+
+    def get(self, index):
+        if index < 0 or index >= self.size:
+            return -1
+        #从真头开始
+        current = self.dummy_head.next
+        #用range [0,index) 从第一个到index个刚好运行index-1次
+        for i in range(index):
+            current = current.next
+            
+        return current.val
+
+    def addAtHead(self, val):
+        #简单的左右赋值
+        self.dummy_head.next = ListNode(val, self.dummy_head.next)
+        self.size += 1
+
+    def addAtTail(self, val):
+        current = self.dummy_head
+        #使用while 指导最后一个node
+        while current.next:
+            current = current.next
+        current.next = ListNode(val)
+        self.size += 1
+
+    def addAtIndex(self, index, val):
+        if index < 0 or index > self.size:
+            return
+        
+        current = self.dummy_head
+        #由于index ==0时不会进入for循环所以直接这样写就好；另外从假头开始，正好到达要修改位置的前一个node
+        for i in range(index):
+            current = current.next
+        current.next = ListNode(val, current.next)
+        self.size += 1
+
+    def deleteAtIndex(self, index):
+        if index < 0 or index >= self.size:
+            return
+        
+        current = self.dummy_head
+        for i in range(index):
+            current = current.next
+        current.next = current.next.next
+        self.size -= 1
+
+
+# Your MyLinkedList object will be instantiated and called as such:
+# obj = MyLinkedList()
+# param_1 = obj.get(index)
+# obj.addAtHead(val)
+# obj.addAtTail(val)
+# obj.addAtIndex(index,val)
+# obj.deleteAtIndex(index)
+
+#反转链表
+#双指针法
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution(object):
+    def reverseList(self, head):
+        """
+        :type head: ListNode
+        :rtype: ListNode
+        """
+        if head:
+            
+            curr = head.next
+            prev = head
+            prev.next = None
+            
+            while curr:
+                n = curr.next
+                curr.next  = prev
+                prev = curr
+                curr = n
+            return prev
+        else:
+            return
+#problems/0024.两两交换链表中的节点
+
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution(object):
+    def swapPairs(self, head):
+        """
+        :type head: ListNode
+        :rtype: ListNode
+        """
+       
+
+        dummy_head = ListNode(next=head)
+        #这里直接借用虚假头的地址，所以会一并在后面更改虚假头的链接
+        curr = dummy_head
+        while curr.next and curr.next.next:
+            #左，右，下一个左，都需要预先存储以防地址丢失 		
+            left=  curr.next
+            right=  curr.next.next
+            curr.next = right
+            nextleft = right.next 
+            right.next = left
+            left.next = nextleft
+            curr = left
+        return dummy_head.next
+
+#删除链表的倒数第N个节点：思路是快慢指针，快的先走n步，然后快的慢的一起走，然后把慢的next跳过一个元素完成删除
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution(object):
+    def removeNthFromEnd(self, head, n):
+        """
+        :type head: ListNode
+        :type n: int
+        :rtype: ListNode
+        """
+        fake = ListNode(next= head)
+        fast  = fake
+        slow = fake
+        while n>0 and fast.next:
+            fast =  fast.next
+            n-=1
+        #要slow指向n的前一个，所以要再进一步
+        fast = fast.next
+        while fast:
+            fast = fast.next
+            slow = slow.next
+        slow.next = slow.next.next
+        return fake.next
+
+
+#.链表相交：两个链在第n个节点相交，之前是各自分离的，找到相交的那个节点
+#因此只要找出链表的各自长度，然后在同一index（伪）下开始往后判断地址是否一致即可找到
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution(object):
+    def getIntersectionNode(self, headA, headB):
+        """
+        :type head1, head1: ListNode
+        :rtype: ListNode
+        """
+        la = 0
+        lb = 0
+        fakea = ListNode(next = headA)
+        while fakea.next:
+            la+=1
+            fakea = fakea.next
+        fakea = ListNode(next = headB)
+        while fakea.next:
+            lb+=1
+            fakea = fakea.next
+        n = la-lb
+        ca = headA
+        cb = headB
+        if n<0:
+            for i in range(abs(n)):
+                cb = cb.next
+        else:
+            for i in range(n):
+                ca  =ca.next
+        while ca and cb:
+            if ca == cb:
+                return ca
+            ca = ca.next
+            cb = cb.next
+        return None
+        
+ #找到链表环入口 https://github.com/youngyangyang04/leetcode-master/blob/master/problems/0142.%E7%8E%AF%E5%BD%A2%E9%93%BE%E8%A1%A8II.md
+#思路是：快的指针一次走两个，慢的一次走一个，相当于如果有环，快的会以每步接近一个的速度和慢的相遇
+#当它们相遇时，通过计算知道相遇点到环入口的距离和head到环入口的距离相等
+#因此再次放两个指针每次走一步，直到相遇，相遇的节点就是环入口
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution(object):
+    def detectCycle(self, head):
+        """
+        :type head: ListNode
+        :rtype: ListNode
+        """
+        fake = ListNode(next = head)
+        slow = head
+        fast = head
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+            if slow == fast:
+                o = fast
+                s = head
+                while o!=s:
+                    o  = o.next
+                    s = s.next
+                return o
+
+            
+        
+            
+        return None
+ 
+
+        

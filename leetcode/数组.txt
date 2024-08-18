@@ -1,0 +1,145 @@
+#二分查找
+#关键在于定界，定好左右界以后查找的逻辑就简单了
+class Solution(object):
+    def search(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: int
+        """
+        n = len(nums)
+        left = 0
+        right = n-1
+        while left<=right:
+            mid = right - (right-left)/2
+            if target<nums[mid]:
+                right = mid-1
+            elif target>nums[mid]:
+                left = mid+1
+            else:
+                return mid
+        return -1
+#移除元素： 移除数组中值为val的元素，返回移除后的数组
+#快慢指针，快指针用来遍历数组，慢指针用来重构数组
+class Solution(object):
+    def removeElement(self, nums, val):
+        """
+        :type nums: List[int]
+        :type val: int
+        :rtype: int
+        """
+        n = len(nums)
+        slow = 0
+        fast = 0
+        while fast < n:
+            if nums[fast]!=val:
+                nums[slow] = nums[fast]
+                slow = slow+1
+            fast=fast+1
+        return slow
+
+#有序数组的平方
+class Solution(object):
+    def sortedSquares(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[int]
+        双指针法i j为左右界，由于数组有序，所以一直比较头尾即可，将头尾平方大数存入结果数组尾部O（n）
+        
+        """
+        results = [float('inf')] * len(nums)
+        n  =len(nums)
+        i = 0
+        j = n-1
+        k = n-1
+        while i<=j:
+            if nums[i]**2 < nums[j]**2:
+                results[k] = nums[j]**2
+                j=j-1
+            else:
+                results[k]  = nums[i]**2
+                i = i+1
+            k = k-1
+        return results
+    """
+    也可以暴力破解
+
+    for i  in range(len(nums)):
+        nums[i]  = nums[i]**2
+    return nums.sort()
+    """
+#长度最小的子数组：
+class Solution(object):
+    def minSubArrayLen(self, target, nums):
+        """
+        :type target: int
+        :type nums: List[int]
+        :rtype: int
+        """
+        n  = len(nums)
+        r = float('inf')
+        i = 0
+        j = 0
+        subl = 0
+        s = 0
+        while j < n:
+            s  = s+nums[j]
+            while s>=target:
+                subl = j-i+1
+                r  = min(r,subl)
+                s = s-nums[i]
+                i  = i+1 
+            j = j+1
+        return r if r != float('inf') else 0
+
+#（版本二）暴力法
+class Solution:
+    def minSubArrayLen(self, s: int, nums: List[int]) -> int:
+        l = len(nums)
+        min_len = float('inf')
+        
+        for i in range(l):
+            cur_sum = 0
+            for j in range(i, l):
+                cur_sum += nums[j]
+                if cur_sum >= s:
+                    min_len = min(min_len, j - i + 1)
+                    break
+        
+        return min_len if min_len != float('inf') else 0
+#螺旋矩阵II
+class Solution(object):
+    def generateMatrix(self, n):
+        """
+        :type n: int
+        :rtype: List[List[int]]
+        """
+        nums = [[0] * n for _ in range(n)]
+        startx = 0
+        starty= 0 
+        loop, mid = n // 2, n // 2     
+        count = 1  
+#关键在这里的lc偏移量，控制圈由外向内
+        for lc in range(1,loop+1):
+            for i  in range(startx, n-lc):
+                nums[starty][i] = count
+                count = count+1
+            for j in range(starty,n-lc):
+                nums[j][n-lc] = count
+                count+=1
+            for i in range(n-lc,startx,-1):
+                nums[n-lc][i]=count
+                count+=1
+            for i in range(n-lc,starty,-1):
+                nums[i][startx]=count
+                count+=1
+            startx +=1
+            starty +=1
+
+        if n % 2 != 0 :			# n为奇数时，填充中心点
+            nums[mid][mid] = count 
+        return nums
+        
+
+        
+            
