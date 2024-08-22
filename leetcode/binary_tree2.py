@@ -212,5 +212,31 @@ class Solution(object):
             return self.lowestCommonAncestor(root.left,p,q)
         else:
             return root
+#701.二叉搜索树中的插入操作
+#https://leetcode.cn/problems/insert-into-a-binary-search-tree/
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution(object):
+    def insertIntoBST(self, root, val):
+        """
+        :type root: TreeNode
+        :type val: int
+        :rtype: TreeNode
+        """
+	#若位置为空则构建节点插入
+        if not root:
+            root = TreeNode(val)
+            return root
+	#递归寻找位置，利用sbt的特性
+        if root.val > val:
+            root.left = self.insertIntoBST(root.left,val)
+        if root.val < val:
+            root.right  = self.insertIntoBST(root.right,val)
+	#插入完成后返回根节点
+        return root
         
         
