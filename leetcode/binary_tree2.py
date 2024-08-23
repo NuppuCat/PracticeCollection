@@ -238,5 +238,46 @@ class Solution(object):
             root.right  = self.insertIntoBST(root.right,val)
 	#插入完成后返回根节点
         return root
+
+
+#0450.删除二叉搜索树中的节点.https://leetcode.cn/problems/delete-node-in-a-bst/
+#删除节点，要考虑各种情况
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution(object):
+    def deleteNode(self, root, key):
+        """
+        :type root: TreeNode
+        :type key: int
+        :rtype: TreeNode
+        """
+        if not root:
+            return root
+            
+        if root.val == key: 	#找到了节点
+            if root.left and not root.right:      #只有左支或右枝，直接返回子节点
+                return root.left
+            elif root.right and not root.left:
+                return root.right
+            elif not root.left and not root.right: #为叶子节点直接删除
+                return None
+            else: 	#都不为空时，找到右子树的最左节点
+                c = root.right  
+                while c.left:
+                    c = c.left
+                c.left= root.left	#然后将根的左支接到最左节点
+                return root.right		#返回右枝替代原根节点
+        if key>root.val:
+            root.right = self.deleteNode(root.right,key)	#注意这里，因为是带返回值的递归，需要返回值把树连接，替代节点原有的位置
+        if key<root.val:
+            root.left = self.deleteNode(root.left,key)
+
+        return root
+        
+
         
         
