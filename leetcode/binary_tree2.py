@@ -278,6 +278,35 @@ class Solution(object):
 
         return root
         
-
+#669. 修剪二叉搜索树  https://leetcode.cn/problems/trim-a-binary-search-tree/
+#给定值的上下界修建树，保持树结构
+#主要思考两层：1，根节点替换 2，子节点替换
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution(object):
+    def trimBST(self, root, low, high):
+        """
+        :type root: TreeNode
+        :type low: int
+        :type high: int
+        :rtype: TreeNode
+        """
+        if not root:
+            return None
+	#若根越界，返回左右枝作为新的根节点
+        if root.val<low:
+            root.right = self.trimBST( root.right, low, high)
+            return root.right
+        if root.val>high:
+            root.left = self.trimBST(root.left,low,high)
+            return root.left
+	#再对子树过滤
+        root.left = self.trimBST(root.left,low,high)
+        root.right = self.trimBST( root.right, low, high)
+        return root    
         
         
