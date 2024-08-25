@@ -308,5 +308,30 @@ class Solution(object):
         root.left = self.trimBST(root.left,low,high)
         root.right = self.trimBST( root.right, low, high)
         return root    
-        
+
+
+#108.将有序数组转换为二叉搜索树 https://leetcode.cn/problems/convert-sorted-array-to-binary-search-tree/
+#有序，且平衡，即中间是根
+#有了逻辑再确定左右枝递归即可
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution(object):
+    def sortedArrayToBST(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: TreeNode
+        """
+        if not nums:
+            return
+        n = len(nums)
+        root = TreeNode(nums[n/2])
+        l = nums[:n/2]
+        r = nums[n/2+1:]
+        root.left = self.sortedArrayToBST(l)
+        root.right = self.sortedArrayToBST(r)
+        return root
         
