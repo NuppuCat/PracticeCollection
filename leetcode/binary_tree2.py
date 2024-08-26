@@ -334,4 +334,36 @@ class Solution(object):
         root.left = self.sortedArrayToBST(l)
         root.right = self.sortedArrayToBST(r)
         return root
+
+
+
+#538.把二叉搜索树转换为累加树 https://leetcode.cn/problems/convert-bst-to-greater-tree/
+#这里逻辑主要在于记录一个当前累加值
+#确定了这个再确定遍历顺序为右中左，基本上就已经解决了
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution(object):
+	#也可以把变量申明放到函数中
+    def __init__(self):
+        self.c =0
+	#注意函数申明要传入self
+    def sbt(self,cur):
+        if not cur:
+           return
+        self.sbt(cur.right)
+        cur.val = self.c+cur.val
+        self.c  = cur.val
+        self.sbt(cur.left)
         
+
+    def convertBST(self, root):
+        """
+        :type root: TreeNode
+        :rtype: TreeNode
+        """
+        self.sbt(root)
+        return root
