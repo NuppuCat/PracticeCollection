@@ -131,3 +131,31 @@ class Solution(object):
             return []
         self.sbt(digits,0)
         return self.result
+
+
+#39. 组合总和 https://leetcode.cn/problems/combination-sum/
+class Solution(object):
+    def __init__(self):
+        self.q = []
+        self.r = []
+    def sbt(self,candidates,target,s):
+        c = self.q[:]
+        if sum(c)>target:
+            return
+        if sum(c)==target:
+            self.r.append(c)
+	#由于组合不能重复，所以仍然需要初始目录，来防止组合变序重复
+        for i in range(s,len(candidates)):
+            self.q.append(candidates[i])
+	#由于元素可以重复，所以初始从i开始，而非i+1
+            self.sbt(candidates,target,i)
+            self.q.pop()
+
+    def combinationSum(self, candidates, target):
+        """
+        :type candidates: List[int]
+        :type target: int
+        :rtype: List[List[int]]
+        """
+        self.sbt(candidates,target,0)
+        return self.r
