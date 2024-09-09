@@ -159,3 +159,42 @@ class Solution(object):
         """
         self.sbt(candidates,target,0)
         return self.r
+
+#40.组合总和II https://leetcode.cn/problems/combination-sum-ii/
+#这里多了一个关于重复元素的问题，之前的题目中candidates元素可以复用，且元素无重复
+#本题核心问题在于，会有重复的元素出现， 因此同元素在同一层的组合就会重复
+#因此，就是先将candidates排序，使重复的元素挨在一起，然后判断当前元素是否和前一元素相同
+#若相同则跳过组合，即可避免重复
+class Solution(object):
+    def __init__(self):
+        self.q = []
+        self.r = []
+    def sbt(self, s , candidates, target):
+        c  = self.q[:]
+        if sum(c) > target:
+            return
+        if sum(c)== target:
+            self.r.append(c)
+            return
+        for i  in range(s,len(candidates)):
+		#判断是否相同元素出现
+            if i > s and candidates[i] == candidates[i - 1]:
+                continue
+		#这一步是为了效率，也可以不写
+            if  sum(c) +candidates[i]>target:
+                break
+		
+            self.q.append(candidates[i])
+		#元素不能复用，因此递归初始目录为i+1
+            self.sbt(i+1,candidates,target)
+            self.q.pop()
+    def combinationSum2(self, candidates, target):
+        """
+        :type candidates: List[int]
+        :type target: int
+        :rtype: List[List[int]]
+        """
+	#最重要的一步：排序为了使重复元素相邻
+        candidates.sort()
+        self.sbt(0,candidates,target)
+        return self.r
