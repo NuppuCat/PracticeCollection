@@ -198,3 +198,47 @@ class Solution(object):
         candidates.sort()
         self.sbt(0,candidates,target)
         return self.r
+
+
+#131.分割回文串 https://leetcode.cn/problems/palindrome-partitioning/submissions/563355593/
+#所谓回文串就是从左右读起都一样的字符串
+#这里有两个问题，第一个是需要判断是否回文
+#第二个是终止条件和运行逻辑
+class Solution(object):
+    def __init__(self):
+        self.r = []
+        self.q = []
+	#写方法判断是否回文
+    def isPalindrome(self,s,start,end):
+	#用while 循环不用考虑上下界，更简单
+        i  = start
+        j = end
+        while i<j:
+            if s[i]!=s[j]:
+                return False
+            i+=1
+            j-=1
+        return True
+    def sbt(self,start,s):
+	#终止条件为：如果初始目录已经比字符串长，则说明这轮搜索已经结束
+        if start>= len(s):
+            self.r.append(self.q[:])
+            return
+	#单层逻辑为，假如start 到 i 是回文串，则放入q，然后继续搜索下一层
+	#若不是则无处理
+	#单字母不会遗漏
+        for i in range(start,len(s)):
+            if self.isPalindrome(s,start,i):
+                self.q.append(s[start:i+1])
+                self.sbt(i+1,s)
+                self.q.pop()
+    def partition(self, s):
+        """
+        :type s: str
+        :rtype: List[List[str]]
+        """
+	#判空
+        if not s:
+            return []
+        self.sbt(0,s)
+        return self.r
