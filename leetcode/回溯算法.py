@@ -242,3 +242,60 @@ class Solution(object):
             return []
         self.sbt(0,s)
         return self.r
+
+
+#93.复原IP地址 https://leetcode.cn/problems/restore-ip-addresses/
+#本题的暴力解法也有很多细节
+#需要一个判断是否合法ip的方法
+#需要判定临时串q是否为空串
+class Solution(object):
+    def __init__(self):
+        self.q =""
+        self.r = []
+    def isip(self, st):
+        qs = self.q.split('.')
+        #ip只有四段 这里可以写在sbt里进行优化效率
+        if len(qs)!= 4:
+            return False
+        for i in qs:
+	#超限了不合法
+            if int(i)>255 or i<0:
+                return False
+	#首字为0不合法
+            if int(i[0])==0 and len(i)>1:
+                return False
+        return True
+    def sbt(self, s, start):
+        
+        if start>=len(s):
+            
+            if self.isip(self.q):
+                self.r.append(self.q)
+            return
+        for i in range(start,len(s)):
+           #串的上界要到i+1，因为包前不包后，否则0：0不出数，并且方括号里注意写：而非，
+            cs = s[start:i+1]
+     	
+            if int(cs)>255:
+                break
+	  #拼接要注意是否第一次接，是否加点
+            if not self.q:
+                self.q+=cs
+            else:
+                self.q=self.q+'.'+cs
+            self.sbt(s,i+1)
+	#回溯同样要看
+            if '.' in self.q:
+
+                self.q = self.q[:len(self.q)-1-len(cs)]
+            else:
+                self.q = ''
+    def restoreIpAddresses(self, s):
+        """
+        :type s: str
+        :rtype: List[str]
+        """
+        if not s:
+            return []
+        self.sbt(s, int(0))
+        return self.r
