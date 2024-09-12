@@ -299,3 +299,67 @@ class Solution(object):
             return []
         self.sbt(s, int(0))
         return self.r
+
+
+
+#78.子集 https://leetcode.cn/problems/subsets/submissions/564056061/
+#子集，要去重，且分长短
+#因此有startindex和length两个维度需要控制
+class Solution(object):
+    def __init__(self):
+        self.q=[]
+        self.r = []
+    def sbt(self,nums,s,l):
+	#当当前q长度达到长度，则加入
+        c = self.q[:]
+        if len(c)>=l:
+            self.r.append(c)
+            return
+	#这里逻辑照常即可，因为上面判断了q的长度作为终止条件
+        for i in range(s,len(nums)):
+            
+            self.q.append(nums[i])
+            self.sbt(nums,i+1,l)
+            self.q.pop()
+
+
+    def subsets(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        """
+        if not nums:
+            return [[]]
+	#这里进行维度控制，遍历所有维度即可
+        for i in range(0,len(nums)+1):
+            self.sbt(nums,0,i)
+    
+        return self.r
+#也可以这样写，就是每变动一次q
+#就往r里添加一次
+#因为求全集就是求树的每一个节点
+#由于for循环中隐含了终止条件，所以可以省略终止条件
+class Solution(object):
+    def __init__(self):
+        self.q=[]
+        self.r = []
+    def sbt(self,nums,s):
+        c = self.q[:]
+        self.r.append(c)
+        
+        for i in range(s,len(nums)):
+            
+            self.q.append(nums[i])
+            self.sbt(nums,i+1)
+            self.q.pop()
+
+
+    def subsets(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        """
+        
+        self.sbt(nums,0)
+    
+        return self.r
