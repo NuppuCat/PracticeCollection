@@ -363,3 +363,35 @@ class Solution(object):
         self.sbt(nums,0)
     
         return self.r
+
+
+
+#90.子集II https://leetcode.cn/problems/subsets-ii/submissions/564405952/
+#这次nums中有重复的数字了，因此和前面的一样，要先排序，再判断是否和前一个一致再进入逻辑
+class Solution(object):
+    def __init__(self):
+        self.q = []
+        self.r = []
+    def sbt(self,nums,s):
+        self.r.append(self.q[:])
+
+        for i in range(s,len(nums)):
+	#这里会先判断i>s 因此不会报错
+	#and 语句会先判断第一个是否是T,是T才会看后半句
+	#而or语句是看第一个是否是F,是F才会看后半句
+	#当然这里换了条件顺序也不影响，因为nums[-1]也是合法的
+            if i>s and nums[i]==nums[i-1]:
+                continue
+            self.q.append(nums[i])
+            self.sbt(nums,i+1)
+            self.q.pop()
+
+    def subsetsWithDup(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        """
+	#先排序
+        nums = sorted(nums)
+        self.sbt(nums,0)
+        return self.r
