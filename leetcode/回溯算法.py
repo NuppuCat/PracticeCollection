@@ -395,3 +395,41 @@ class Solution(object):
         nums = sorted(nums)
         self.sbt(nums,0)
         return self.r
+
+
+
+#491.递增子序列 https://leetcode.cn/problems/non-decreasing-subsequences/submissions/564698536/
+#这个问题在于，不能给序列排序，因此需要一个set进行去重，而不能简单的看是否相邻的元素相同
+#这个set应该是放在每一层中间，是同一层不能有重复的
+class Solution(object):
+    def __init__(self):
+        self.q=[]
+        self.r =[]
+    def sbt(self,nums,s):
+        c = self.q[:]
+	#序列长度至少为2
+        if len(c)>=2:
+            self.r.append(c)
+	#给定set，记录适用过的元素
+        uset = set()
+        for i in range(s,len(nums)):
+	#这里的判断条件：
+	#q尾元素小于新元素或q为新队列时添加
+	#且新元素是没有出现过的
+	#否则跳过这个元素
+            if (self.q and nums[i] < self.q[-1]) or nums[i] in uset:
+                continue
+	#set 添加用add
+            uset.add(nums[i])
+            self.q.append(nums[i])
+            self.sbt(nums,i+1)
+            self.q.pop()
+
+    def findSubsequences(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        """
+    
+        self.sbt(nums,0)
+        return self.r
