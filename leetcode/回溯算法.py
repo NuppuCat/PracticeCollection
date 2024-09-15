@@ -433,3 +433,36 @@ class Solution(object):
     
         self.sbt(nums,0)
         return self.r
+
+
+
+#46.全排列 https://leetcode.cn/problems/permutations/submissions/564954881/
+#求排列，因此不需要startindex去重
+#但是需要每次检查是否已使用元素
+#由于元素无重复，因此直接判断是否再当前队列中即可
+#当元素有重复时，则维护一个used index数组标记即可
+class Solution(object):
+    def __init__(self):
+        self.q=[]
+        self.r = []
+    def sbt(self,nums):
+        c = self.q[:]
+	#到达限定长度则添加
+        if len(c)==len(nums):
+            self.r.append(c)
+            return	
+        for i in range(len(nums)):
+	#for 直接从头遍历，若元素已在q中，则跳过
+            if nums[i] in self.q:
+                continue
+            
+            self.q.append(nums[i])
+            self.sbt(nums)
+            self.q.pop()
+    def permute(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        """
+        self.sbt(nums)
+        return self.r
