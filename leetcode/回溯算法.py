@@ -466,3 +466,42 @@ class Solution(object):
         """
         self.sbt(nums)
         return self.r
+#47.全排列 II  https://leetcode.cn/problems/permutations-ii/submissions/565154847/
+#排列去重元素
+#逻辑基本相同
+class Solution(object):
+    def __init__(self):
+        self.q=[]
+        self.r = []
+    def sbt(self,nums,iq):
+        c = self.q[:]
+        if len(c)==len(nums):
+            self.r.append(c)
+            return
+        
+        for i in range(len(nums)):
+           
+            if not iq[i]:
+                continue
+            #这里要注意，要有一个 iq[i-1]==False 的条件，若没有这个，则会少取一个重复的元素，进而收集不到有用的排列
+	    #另外， 条件为iq[i-1]==True也是可以的。 为True时是数层上对前一位去重，False则是树枝上去重。树层上去重更高效，但不好理解
+            if i>0 and nums[i]==nums[i-1] and iq[i-1]==False:
+                
+                continue
+            
+            iq[i] = False
+            self.q.append(nums[i])
+            self.sbt(nums,iq)
+            self.q.pop()
+            iq[i] = True
+    def permuteUnique(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        """
+        nums.sort()
+        iq = []
+        for i in range(len(nums)):
+            iq.append(True)
+        self.sbt(nums,iq)
+        return self.r
