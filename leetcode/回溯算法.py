@@ -505,3 +505,71 @@ class Solution(object):
             iq.append(True)
         self.sbt(nums,iq)
         return self.r
+
+#51. N皇后 https://leetcode.cn/problems/n-queens/
+#二维数组的棋盘上，横竖斜不能有两个Q
+#这个问题复杂了很多：首先是如何构建回溯问题
+#把棋盘上行作为深度，列作为层，每次检查是否可以放置棋子，就变成了回溯问题
+#其次是终止条件，和之前不同，是标记一个处理行的索引，维度达到n则意味着棋盘已经遍历完毕，n+1时终止
+#然后是很多判断是否合法的细节：由于行内是在循环中且都会回溯，因此行内不需要判断
+#列内的判断相对简单，只需要判断之前的列上有没有出现Q
+#斜方向的判断则需要一些想象力，由于是从上往下排，仅判断左上和右上有没有Q即可，但是二维数组的遍历方法咋一看是不容易想出来的
+class Solution(object):
+    #定义方法，制定规则来判断是否可以在棋盘q的某位置放置Q
+    def isvalid(self,row,col,q):
+	#检查列上有无Q
+        for i in range(row):
+            if q[i][col] == 'Q':
+
+                return False
+	#检查左上有无Q
+	#这里用while条件更合适，左上意味着 -1 -1
+        i,j = row-1,col-1
+        while i >=0 and j>=0:
+            if q[i][j] == 'Q':
+                return False
+            i-=1
+            j-=1
+	#检查右上有无Q
+	#右上意味着 -1 +1
+        i,j = row-1,col+1
+        while i>=0 and j<len(q):
+            if q[i][j] == 'Q':
+                return False
+            j+=1
+            i-=1
+	#记得符合规则返回True
+        return True
+    def sbt(self,row,n,q,r):
+        #深度达到棋盘边界则记录棋盘（当前树轨迹）
+        if row==n:
+            c = []
+		#由于棋盘定义为二维数组，所以需要遍历拼接字符串
+            for l in q:
+                row = ''
+                for i in l:
+                    row+=i
+                c.append(row) 
+            r.append(c)
+            return
+	#层内遍历
+        for col in range(n):
+           
+            if self.isvalid(row,col,q):
+                
+                q[row][col] = 'Q'
+		#深入 row+1
+                self.sbt(row+1,n,q,r)
+		#回溯
+                q[row][col] = '.'
+    def solveNQueens(self, n):
+        """
+        :type n: int
+        :rtype: List[List[str]]
+        """
+	#因为字符串不能直接操作更改索引位置
+	#为了递归单层逻辑的方便直接把棋盘构筑成字符的二维数组
+        q = [['.']*n for _ in range(n)]
+        r= []
+        self.sbt(0,n,q,r)
+        return r
