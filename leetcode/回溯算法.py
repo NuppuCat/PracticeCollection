@@ -573,3 +573,166 @@ class Solution(object):
         r= []
         self.sbt(0,n,q,r)
         return r
+
+
+#数独 https://leetcode.cn/problems/sudoku-solver/submissions/566466672/
+#超时解
+class Solution(object):
+    def isvalid(self,row,col,val,q):
+        for i in range(len(q)):
+            if q[row][i] ==val:
+                return False
+        for i in range(len(q)):
+            if q[i][col] ==val:
+                return False
+        a  = row//3
+        b = col//3
+        for i in range(a*3,a*3+3):
+            for j in range(b*3,b*3+3):
+                if q[i][j]  == val:
+                    return False
+        return True
+
+
+    def sbt(self,q,idc,r):
+        if  not id:
+            r.append(q[:])
+            return 
+        ic = idc[:]
+        for i in idc:
+            a,b = i
+            for j in range(1,10):
+                if self.isvalid(a,b,j,q):
+                    print(ic)
+                    ic.pop(0)
+                    q[a][b] = str(j)
+                    self.sbt(q,ic,r)
+                    q[a][b]  = '.'
+                    ic  = idc[:]
+                
+        
+
+
+    def solveSudoku(self, board):
+        """
+        :type board: List[List[str]]
+        :rtype: None Do not return anything, modify board in-place instead.
+        """
+        idc = []
+        r = []
+        for i in range(len(board)):
+            for j in range(len(board)):
+                if board[i][j] =='.':
+                    idc.append([i,j])
+        self.sbt(board,idc,r)
+        return r
+
+
+#标准解
+#只要一个解，所以找到就可以返回
+#在递归时直接返回即可
+class Solution(object):
+    def isvalid(self,row,col,val,q):
+        val  = str(val)
+        for i in range(len(q)):
+            if q[row][i] ==val:
+                return False
+        for i in range(len(q)):
+            if q[i][col] ==val:
+                return False
+        a  = row//3
+        b = col//3
+        for i in range(a*3,a*3+3):
+            for j in range(b*3,b*3+3):
+                if q[i][j]  == val:
+                    return False
+        return True
+
+	#直接用for循环，遇到数字循环跳过
+    def sbt(self,board):
+        
+        for i in range(len(board)):
+           
+            for j in range(len(board[0])):
+                if board[i][j] != '.':
+                    continue
+                for k in range(1,10):
+                    if self.isvalid(i,j,k,board):
+                        board[i][j] = str(k)
+			#找到解则不回溯，直接return
+                        if self.sbt(board):return True
+                        board[i][j]  = '.'
+		#遍历本格无解，则会回溯或者返回否
+                return False 
+        return True
+                
+        
+
+
+    def solveSudoku(self, board):
+        """
+        :type board: List[List[str]]
+	#这里很重要，限定了返回值
+        :rtype: None Do not return anything, modify board in-place instead.
+        """
+        
+        self.sbt(board)
+#debug后的初版，效率略高于标准版
+class Solution(object):
+    def isvalid(self,row,col,val,q):
+	#这里需要转字符串
+        val = str(val)
+        for i in range(len(q)):
+            if q[row][i] == val:
+                return False
+        for i in range(len(q)):
+            if q[i][col] ==val:
+                return False
+        a  = row//3
+        b = col//3
+        for i in range(a*3,a*3+3):
+            for j in range(b*3,b*3+3):
+                if q[i][j]  == val:
+                    return False
+        return True
+
+
+    def sbt(self,board,idc):
+	#终止条件为清空‘.’的坐标数组
+        if not idc:
+            return True
+        #print(len(idc))
+	#用i 寻找位置
+        for i in range(len(idc)):
+            a,b = idc[i]
+            for j in range(1,10):
+               
+                if self.isvalid(a,b,j,board):
+                    
+                    board[a][b] = str(j)
+			#这里用pop(i）是对的，删除该位置的元素
+                    idc.pop(i)
+                    if self.sbt(board,idc):return True
+                    board[a][b]  = '.'
+			#用insert还原数组
+			#原版直接遍历元素，在回溯的时候会乱序，导致递归无法收敛
+                    idc.insert(i,[a,b])
+            return False
+        
+      
+        
+
+
+    def solveSudoku(self, board):
+        """
+        :type board: List[List[str]]
+        :rtype: None Do not return anything, modify board in-place instead.
+        """
+        idc = []
+      
+        for i in range(len(board)):
+            for j in range(len(board)):
+                if board[i][j] =='.':
+                    idc.append([i,j])
+    
+        self.sbt(board,idc)
