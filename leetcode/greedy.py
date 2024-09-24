@@ -130,3 +130,47 @@ class Solution(object):
           
         return c
 
+
+#53. 最大子序和 https://leetcode.cn/problems/maximum-subarray/
+#贪心算法，贪心在于若当前和小于0，那么从下一个数重新计起
+class Solution(object):
+    def maxSubArray(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+	#这里设为无穷小，方便边界设置，和值为负数的时候
+        r = float('-inf')
+        c = 0
+     
+            
+        for i in range(len(nums)):
+		#三步走，顺序很重要
+		#先计和
+            c += nums[i]
+		#再对比赋值记录
+            r = max(r,c)
+		#若当前和小于0，重置和
+            if c <0:
+                
+                c = 0
+            
+        return r
+#暴力破解， 遇到长序列无法通过
+class Solution(object):
+    def maxSubArray(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        r = float('-inf')
+        c = 0
+     
+            
+        for i in range(len(nums)):#i 为头目录
+            c= 0
+            for j in range(i,len(nums)):#j 末尾
+                c+=nums[j]
+                r = max(r,c)
+        return r
+
