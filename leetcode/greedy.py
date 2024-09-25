@@ -174,3 +174,48 @@ class Solution(object):
                 r = max(r,c)
         return r
 
+
+#122.买卖股票的最佳时机 II https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/submissions/567933967/
+#初始构想
+#冗余较多，不过思路比较顺
+class Solution(object):
+
+    def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
+        r= 0
+        c=0
+        bd= 0
+        for i in range(1,len(prices)):
+            cc = prices[i]-prices[bd]
+            if cc<c :
+                
+                bd = i 
+                continue
+            else:
+                c = cc
+                bd = i
+                r = r+c
+                c = 0
+            
+        return r
+#简化逻辑
+class Solution(object):
+
+    def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
+        r= 0
+      #只要把正收益全部收集即可
+        for i in range(1,len(prices)):
+            cc = prices[i]-prices[i-1]
+            if cc>0 :
+                r+=cc
+            
+        return r
+
+
