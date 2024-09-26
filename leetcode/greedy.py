@@ -219,3 +219,54 @@ class Solution(object):
         return r
 
 
+
+#55. 跳跃游戏 https://leetcode.cn/problems/jump-game/submissions/568312978/
+#这里需要注意的是元素为0 的情况， 当元素为0 且最远辐射小于等于为0的位置时，循环需要结束
+class Solution(object):
+    def canJump(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: bool
+        """
+	#这一步其实可以不写，写了可以加快一点效率
+        if len(nums)<2:
+            return True
+	#初始化最远辐射距离
+        m = 0
+        #len-1，到了最后一位，不管是几都算true
+        for i in range(len(nums)-1):
+		#当元素为0且最远到这里时，遍历结束
+            if nums[i]==0 and m<=i:
+                break
+		#否则位置+元素值为辐射距离
+            n = nums[i]+i
+		#维护最远辐射距离
+            m = max(n,m)
+	#这里要加1，因为i是从0计数的，对比的是数组长
+        return m+1>=len(nums)
+#优化解，效率更高
+#在循环中返回True
+#循环结束返回False
+class Solution(object):
+    def canJump(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: bool
+        """
+        
+        cover = 0
+        if len(nums) == 1: return True
+        i = 0
+        # python不支持动态修改for循环中变量,使用while循环代替
+	#当 遍历元素在 覆盖范围中时
+        while i <= cover:
+		#记录覆盖范围
+            cover = max(i + nums[i], cover)
+		#若范围到达末尾则可以
+            if cover >= len(nums) - 1: return True
+            i += 1
+        return False
+
+            
+
+
