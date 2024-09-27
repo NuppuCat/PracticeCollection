@@ -1,4 +1,5 @@
 #贪心算法
+#贪心算法没有普遍的模式和规律，比较复杂
 #分发饼干 https://leetcode.cn/problems/assign-cookies/submissions/567034018/
 class Solution(object):
     def findContentChildren(self, g, s):
