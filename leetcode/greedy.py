@@ -267,6 +267,43 @@ class Solution(object):
             i += 1
         return False
 
+
+#45.跳跃游戏 II https://leetcode.cn/problems/jump-game-ii/submissions/568572763/
+#这里求最小步数，很容易感觉需要递归
+#其实不用，只需要计量这一步可到的范围和下一步可到的范围
+#当下一步可到的范围覆盖了末端，就是最短的步数：要从覆盖范围出发，不管怎么跳，覆盖范围内一定是可以跳到的，以最小的步数增加覆盖范围，覆盖范围一旦覆盖了终点，得到的就是最少步数
+
+class Solution(object):
+    def jump(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        
+        n  = len(nums)
+	#小于2的数组有边界问题
+        if n<2:
+            return 0
+	#步数记录
+        r= 0
+	#当前最大范围：默认从0位置开始
+        curr = 0
+	#下一步最大范围初始化为0
+        nextr = 0
+        for i in range(n):
+		#计量下一步可达的最远范围
+            nextr = max(i+nums[i],nextr)
+		#如果达到了当前最远范围
+            if i == curr:
+		#步数+1
+                r+=1
+		#当前最远更新到下一步
+                curr = nextr
+		#若已经覆盖，则跳出循环
+                if nextr >= n-1:
+                    break
+        return r
+
             
 
 
