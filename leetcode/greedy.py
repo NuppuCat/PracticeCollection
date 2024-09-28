@@ -305,6 +305,67 @@ class Solution(object):
                     break
         return r
 
+
+
+#1005.K次取反后最大化的数组和 https://leetcode.cn/problems/maximize-sum-of-array-after-k-negations/submissions/568793654/
+#本题有两种情况：首先要把负的变成正的
+#然后尽量变小的成负的
+#思考后硬解，不够优雅
+class Solution(object):
+    def largestSumAfterKNegations(self, nums, k):
+        """
+        :type nums: List[int]
+        :type k: int
+        :rtype: int
+        """
+        nums.sort()
+        r =0
+	#for循环把负变正，然后根据剩余的变化数返回值
+        for i in range(len(nums)):
+            if k>0:
+                if nums[i]<0:
+                    nums[i] = -nums[i]
+                    k-=1
+                elif nums[i] == 0:
+                    return sum(nums)
+                elif nums[i]>0 and k%2==0:
+                    return sum(nums)
+                elif  nums[i]>0 and k%2!=0:
+                    nums.sort()
+                    nums[0]= -nums[0]
+                    return sum(nums)
+            else:
+                break
+        #注意，当全负数组长度小于k时需要进一步判断
+        if k>0:
+            if k%2==0:
+                return sum(nums)
+            else:
+                nums.sort()
+                nums[0]= -nums[0]
+                return sum(nums)
+        return sum(nums)
+#正解，效率略低，但很优雅
+class Solution(object):
+    def largestSumAfterKNegations(self, nums, k):
+        """
+        :type nums: List[int]
+        :type k: int
+        :rtype: int
+        """
+        #排序表达式
+	#nums.sort(ket=lambda x:abs(x), reverse=True)
+	#传入 x 的绝对值 作为排序的依据 key, reverse = True 表示降序排列
+        nums.sort(key=lambda x: abs(x), reverse=True)
+        for i in range(len(nums)):
+            if nums[i]<0 and k>0:
+                nums[i] = -nums[i]
+                k-=1
+        if k%2!=0:
+            nums[-1]= -nums[-1]
+            
+        return sum(nums)
+
             
 
 
