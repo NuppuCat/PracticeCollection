@@ -366,6 +366,37 @@ class Solution(object):
             
         return sum(nums)
 
+
+#134. 加油站  https://leetcode.com/problems/gas-station/submissions/1405920057/
+#贪心算法考的都是思路
+#本题有两个点：首先是总消耗大于总储备，则无法抵达
+#第二个是当前累计的留存量小于0 时，那么起始点应设在后一个点
+class Solution(object):
+    def canCompleteCircuit(self, gas, cost):
+        """
+        :type gas: List[int]
+        :type cost: List[int]
+        :rtype: int
+        """
+        #起始点
+        start = 0
+	#总留存量
+        ts = 0
+	#当前起始点累计留存量
+        cur =0
+        for i in range(len(gas)):
+            cur+= gas[i]-cost[i]
+            ts += gas[i]-cost[i]
+		#若累计留存量小于0，则重置起始点为下一站
+		#这里假如起始点在第一个，即循环开始，则会在i=0时通过判定
+		#假如最后也没找到起始点，start也不会越界，因为后边有判定总留存量
+            if cur < 0:
+                cur = 0
+                start = i+1
+	#判定总留存量
+        if ts <0: return -1
+        return start
+
             
 
 
