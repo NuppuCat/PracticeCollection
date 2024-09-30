@@ -397,6 +397,30 @@ class Solution(object):
         if ts <0: return -1
         return start
 
+
+#135. 分发糖果 https://leetcode.cn/problems/candy/submissions/569294786/
+#本题思路在于相邻有左右邻居
+#因此要设一个分发糖果的数组，从左往右看一遍找到满足的情况，再从右往左看一遍再找到满足的情况，取二者中大的那个即可同时满足左右
+class Solution(object):
+    def candy(self, ratings):
+        """
+        :type ratings: List[int]
+        :rtype: int
+        """
+	#分发数组初始化为1
+        candyvec = [1] * len(ratings)
+        #从左往右看，满足右大于左的 +1
+	for i in range(1,len(ratings)):
+            if ratings[i]>ratings[i-1]:
+                candyvec[i] = candyvec[i-1]+1
+	#从右往左看， 因为左边的元素比较和右边的有关，因此要逆序遍历，左大于右时的情况
+        #这里是len -2 到 -1，即倒数第二个元素 到 0， -1 表示逆序 
+        for i in range(len(ratings)-2,-1,-1):
+	#这里左大于右时，取左右逻辑的最大值 max(candyvec[i],candyvec[i+1]+1)
+            if ratings[i]>ratings[i+1]:
+                candyvec[i] = max(candyvec[i],candyvec[i+1]+1)
+        return sum(candyvec)
+
             
 
 
