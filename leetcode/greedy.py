@@ -421,6 +421,44 @@ class Solution(object):
                 candyvec[i] = max(candyvec[i],candyvec[i+1]+1)
         return sum(candyvec)
 
+
+#860.柠檬水找零 https://leetcode.cn/problems/lemonade-change/submissions/569426432/
+#本题在于要建立一个基于面值的计数
+#然后分情况找零
+#逻辑很简单，只不过情况优点多
+class Solution(object):
+    def lemonadeChange(self, bills):
+        """
+        :type bills: List[int]
+        :rtype: bool
+        """
+	# 5 10 20 计数
+        rest = [0,0,0]
+        
+        for i in range(len(bills)):
+		#收到5刀
+            if bills[i] == 5:
+                rest[0] +=1
+		#收到10刀找5刀不够了就找不开
+            if bills[i] == 10:
+                if rest[0]>0:
+                    rest[0] -= 1
+                    rest[1] +=1
+                else:
+                    return False
+		#收到20 先找10块，没有10块找三个5
+            if bills[i] == 20:
+                if rest[0]>0 and rest[1]>0:
+                    rest[0]-=1
+                    rest[1]-=1
+                    rest[2]+=1
+                elif rest[0]>=3:
+                    rest[0] -=3
+                    rest[2]+=1
+                else:
+                    return False
+        return True           
+
             
 
 
