@@ -457,7 +457,30 @@ class Solution(object):
                     rest[2]+=1
                 else:
                     return False
-        return True           
+        return True       
+
+
+#406.根据身高重建队列 https://leetcode.cn/problems/queue-reconstruction-by-height/submissions/569610215/
+#本题比较重要：
+#首先思路上，是从大到小排人，从小到大排阶层
+#然后按阶层插入数组对应位置即可，因为后插入的都比先插入的小，所以都是合法的
+#其次是代码细节上
+class Solution(object):
+    
+    def reconstructQueue(self, people):
+        """
+        :type people: List[List[int]]
+        :rtype: List[List[int]]
+        """
+	#排序 数组.sort(key  = lambda x: (-x[0],x[1]))
+	#当数组要自定义简单排序逻辑，且有两重排序规则时，括号里按顺序编写规则
+        people.sort(key  = lambda x: (-x[0],x[1]))
+        r = []
+        for i in range(len(people)):
+		# insert 函数再次出现，表示插入到指定位置
+            r.insert(people[i][1],people[i])
+        return r
+            
 
             
 
