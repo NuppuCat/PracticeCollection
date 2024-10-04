@@ -480,7 +480,42 @@ class Solution(object):
 		# insert 函数再次出现，表示插入到指定位置
             r.insert(people[i][1],people[i])
         return r
-            
+
+
+#452. 用最少数量的箭引爆气球 https://leetcode.cn/problems/minimum-number-of-arrows-to-burst-balloons/submissions/570011194/
+#本题在于想清楚左右界
+#然后就往前推，假如不排序，肯定是乱计的，因此要先排序
+#排序以后维持交集，新点出了交集，那么count+1
+#for循环和赋值有些冗余，可以精炼，不过性能没有提升
+class Solution(object):
+    def findMinArrowShots(self, points):
+        """
+        :type points: List[List[int]]
+        :rtype: int
+        """
+        if len(points)<2:
+            return len(points)
+	#排序，这个地方也可以不用双重排序，不影响逻辑，但是思路就是感觉这样更可能
+        points.sort(key = lambda x: (x[0],-x[1]))
+        count = 1
+	#初始化交集
+        lm=points[0][0]
+        rm = points[0][1]
+	
+
+        for i in points:
+            l = i[0]
+            r = i[1]
+		#遍历的逻辑就是左界超出了交集右界，就是说无交集了，则需要新箭，而因为是排序过的，所以以后的左界越来越右
+            if l > rm:
+                count +=1
+                lm = i[0]
+                rm = i[1]
+		#否则有交集，更新交集上下界
+            else:
+                rm = min(r,rm)
+                l = max(l,lm)
+        return count
 
             
 
