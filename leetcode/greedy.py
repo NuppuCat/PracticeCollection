@@ -517,6 +517,53 @@ class Solution(object):
                 l = max(l,lm)
         return count
 
+#435. 无重叠区间 https://leetcode.cn/problems/non-overlapping-intervals/submissions/570212976/
+#原始解 有错误且效率低
+class Solution(object):
+    def eraseOverlapIntervals(self, intervals):
+        """
+        :type intervals: List[List[int]]
+        :rtype: int
+        """
+        if len(intervals)<2:
+            return 0
+        c = 0
+	#这里排序可以单层排序，因为双重排序也弥补不了逻辑上的失误，且效率很低
+        intervals.sort(key = lambda x:(x[0],x[1]-x[0]))
+	#这里cl其实是不必要的，因为cl已经排序过了，而且判断只需要cr
+        cl,cr  = intervals[0][0],intervals[0][1]
+        for i in range(1,len(intervals)):
+		#这个地方有个逻辑错误，就是当有覆盖是不仅要计数加1，还需要判断右界是否变更，
+		#因为靠右（下界更大的）可能会有更短的（但是上界更小）区间出现，因此就可以换右界更小的区间，找到计数
+            if intervals[i][0]<cr:
+                c+=1
+            else:
+                cl,cr  = intervals[i][0],intervals[i][1]
+        return c
+#修正解
+class Solution(object):
+    def eraseOverlapIntervals(self, intervals):
+        """
+        :type intervals: List[List[int]]
+        :rtype: int
+        """
+        if len(intervals)<2:
+            return 0
+        c = 0
+	#单排，快了很多
+        intervals.sort(key = lambda x: x[0])
+	#单变量计上界
+        cr  = intervals[0][1]
+        for i in range(1,len(intervals)):
+            if intervals[i][0]<cr:
+		#取靠左的（小的）上界
+                cr  = min(cr,intervals[i][1])
+                c+=1
+            else:
+                cr  =intervals[i][1]
+        return c
+            
+
             
 
 
