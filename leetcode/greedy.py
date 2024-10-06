@@ -562,6 +562,61 @@ class Solution(object):
             else:
                 cr  =intervals[i][1]
         return c
+
+
+#763.划分字母区间 https://leetcode.cn/problems/partition-labels/submissions/570461983/
+#本题有些复杂，因为首先要找到字母的最大坐标
+#然后要理清返回结果的逻辑
+#细节很多
+class Solution(object):
+    
+    def partitionLabels(self, s):
+        """
+        :type s: str
+        :rtype: List[int]
+        """
+        r= []
+        d = defaultdict()
+        for i in range(len(s)):
+		#这里用了字典，有个方法叫setdefault,可以初始化key 对应的value值和数据类型
+		#和之前的d[i] = d.get(i, 0) +1 和这个get 设置初始值的 操作类似
+            d.setdefault(s[i],[]).append(i)
+	#记录当前字段最大坐标，初始化为-1
+        m = -1
+        for i in range(len(s)):
+            #获得当前字母最大坐标
+            a= max(d[s[i]])
+		#更新当前字段最大坐标
+            m = max(m,a)
+		#把判断条件放在后面，以应对第一个字母独成一段的情况
+            if i == m:
+                if not r: r.append(i+1)
+                else: r.append(i+1-sum(r))
+        return r
+#优化解
+#仅用字典记录字母最大坐标，且用start 和 end 提升计算效率
+class Solution(object):
+    
+    def partitionLabels(self, s):
+        """
+        :type s: str
+        :rtype: List[int]
+        """
+        last_occurrence = {}  # 存储每个字符最后出现的位置
+	#enumerate 获取索引 i 和对应值 ch
+        for i, ch in enumerate(s):
+            last_occurrence[ch] = i
+
+        result = []
+        start = 0
+        end = 0
+        for i, ch in enumerate(s):
+            end = max(end, last_occurrence[ch])  # 找到当前字符出现的最远位置
+            if i == end:  # 如果当前位置是最远位置，表示可以分割出一个区间
+                result.append(end - start + 1)
+                start = i + 1
+
+        return result
             
 
             
