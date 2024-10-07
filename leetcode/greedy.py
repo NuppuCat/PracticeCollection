@@ -617,6 +617,33 @@ class Solution(object):
                 start = i + 1
 
         return result
+
+#56. 合并区间 https://leetcode.cn/problems/merge-intervals/submissions/570638993/         
+#本题逻辑简单，但是有很多细节
+class Solution(object):
+    def merge(self, intervals):
+        """
+        :type intervals: List[List[int]]
+        :rtype: List[List[int]]
+        """
+        r = []
+	#左界排序
+        intervals.sort(key = lambda x: x[0])
+	#初始化当前合并区间
+        s  = intervals[0][0]
+        e = intervals[0][1]
+        for i in range(len(intervals)):
+	#元素超界则将当前区间存入解，并重新初始化区间
+            if intervals[i][0] > e :
+                r.append([s,e])
+                s = intervals[i][0]
+                e = intervals[i][1]
+	#否则右界取max。这里注意要取max，否则可能会缩短区间
+            else:
+                e = max(intervals[i][1],e)
+	#遍历完记得把最后一个区间存入
+        r.append([s,e])
+        return r 
             
 
             
