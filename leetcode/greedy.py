@@ -644,6 +644,53 @@ class Solution(object):
 	#遍历完记得把最后一个区间存入
         r.append([s,e])
         return r 
+
+#738.单调递增的数字 https://leetcode.cn/problems/monotone-increasing-digits/submissions/570901898/
+#本题思路是：如果左边的一位比右边大，那么找到最左边出现这种情况的地方，把原位-1，后边填9
+#但是仍然有很多细节，比如数字的位数操作，或者数字转字符串
+#操作数字位数属于暴力解，用循环递减数值判断数值是否符合递增的标准，判断方法如下
+    """
+def checkNum(self, num):
+	#当前最大值，标记最右位的值
+        max_digit = 10
+        while num:
+		#取模后依次取最右
+            digit = num % 10
+            if max_digit >= digit:
+                max_digit = digit
+            else:
+                return False
+		#取除数直到位0
+            num //= 10
+        return True
+    """
+#操作字符串，因为字符串在python和大多数语言中是写在底层不可更改的，因此每操作一次，都得重新赋值
+#比如让前一位减一的操作： strNum = strNum[:i - 1] + str(int(strNum[i - 1]) - 1) + strNum[i:]
+#和让某一位变成9的操作：strNum = strNum[:i] + '9' + strNum[i + 1:]
+#值得注意的是纯数字的字符之间还是可以比较大小的
+
+#以下为比较优质的解法
+class Solution(object):
+    def monotoneIncreasingDigits(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
+	#这里使用把字符串变成数组，这样就可以直接修改字符了
+        s = list(str(n))
+	#记录要变成9的最大位，即不单调递增从左往右第一次发生的地方
+        flag = len(s)
+	#区间永远包前不包后，因此是从len-1到0， step是-1
+        for i in range(len(s)-1,0,-1):
+            if s[i]<s[i-1]:
+		#从右往左遍历，当出现了乱序，则重新标记flag，直到最左
+                flag = i
+		#将前一位-1，因为假如不是最左都会变成9，因此这里和上面flag一样，都是一个浮动的标记
+                s[i-1] = str(int(s[i-1])-1)
+        for i in range(flag,len(s)):
+            s[i] = '9'
+	#注意这里s是一个list，需要 ''.join(s)转化成字符串再转化成数字
+        return int(''.join(s))
             
 
             
