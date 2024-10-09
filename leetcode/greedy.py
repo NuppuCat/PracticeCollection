@@ -691,6 +691,51 @@ class Solution(object):
             s[i] = '9'
 	#注意这里s是一个list，需要 ''.join(s)转化成字符串再转化成数字
         return int(''.join(s))
+
+#968.监控二叉树 https://leetcode.cn/problems/binary-tree-cameras/
+#本题思路很难临场想到
+#首先是怎么遍历二叉树，其次是逻辑是什么样，最后是二叉树节点状态怎么标记
+#因为从下往上，不在叶子安摄像头总体优于从上往下安（从上往下仅节省一个根节点，从下往上可能少安指数个叶子节点），所以从下往上遍历
+#要做逻辑，先得标记状态，总共有三种状态，即：未被覆盖，有摄像头以及被覆盖。因为要算最小摄像头数量所以要把有摄像头单做一种状态，因此被覆盖就仅剩一种与摄像头相邻的情况
+#那么1，当左右都被覆盖时，父节点为了节省可以不被覆盖，即返回0
+#2当左右有未被覆盖的节点时，父节点需要安装摄像头，返回1
+#3最后当左右节点中有摄像头时，父节点被覆盖了，返回2
+#最后，因为情况1也涵盖了根节点，而根节点之上则没有节点了，所以要根据最终的返回值判断是否要在根节点上加摄像头
+# Definition for a binary tree node.
+# class TreeNode(object):
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution(object):
+    def __init__(self):
+        self.r = 0
+    def sbt(self, node):
+	#到了空节点，因为不想让叶子安装所以空节点计为2
+        if not node:
+            return 2
+	#从下往上遍历
+        l = self.sbt(node.left)
+        r = self.sbt(node.right)
+	#情况1
+        if l==2 and r==2: return 0
+	#情况2
+        elif l==0 or r==0:
+            self.r+=1
+            return 1
+	#情况3
+        elif l==1 or r==1: return 2
+        else:return -1
+        
+    def minCameraCover(self, root):
+        """
+        :type root: TreeNode
+        :rtype: int
+        """
+	#根节点是否覆盖
+        if self.sbt(root) == 0:
+            self.r+=1
+        return self.r
             
 
             
