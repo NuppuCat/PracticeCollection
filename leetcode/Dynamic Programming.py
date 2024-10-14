@@ -49,6 +49,7 @@ class Solution(object):
         :rtype: int
         """
 	#0，1可以直接跨过，所以从2开始遍历.即第一步无消耗
+	#相当于到哪一步最小花多少
         r = [0] * (len(cost)+1)
         
         for i in range(2,len(cost)+1):
@@ -57,6 +58,7 @@ class Solution(object):
 
 #这个解是最开始写出来的
 #第一步有消耗，最后一步无消耗
+#相当于到了先消耗所立的数字，计算到下一步所需的总消耗最小
 class Solution(object):
     def minCostClimbingStairs(self, cost):
         """
