@@ -71,3 +71,52 @@ class Solution(object):
             r[i]  = min(r[i-2]+cost[i-1],r[i-1]+cost[i-1])
 	#到达倒数第一二阶，比较大小
         return min(r[-1],r[-2])
+
+
+#62.不同路径 https://leetcode.cn/problems/unique-paths/submissions/572971006/
+#思路上还是一致于前：即，因为机器人只能往右或者下走，那么动态数组到达m,n位置的方法总数= 到达其上边一格的方法数 + 到达其左边一格的方法数
+#本题难度在于二维数组的动态规划
+
+class Solution(object):
+    def uniquePaths(self, m, n):
+        """
+        :type m: int
+        :type n: int
+        :rtype: int
+        """
+	#用for 循环构建 二维数组
+	#[[0]* n for _ in range(m)]
+        r = [[0]*n for _ in range(m)]
+	#到达第一列任意位置的方法只有一直往下一种，所以初始化为1
+        for i in range(m):
+            r[i][0] = 1
+	#同理到第一行只有一直往左
+        for i in range(n):
+            r[0][i] = 1
+	#从第二行/列开始遍历计算
+        for i in range(1,m):
+            for j in range(1,n):
+                r[i][j] = r[i-1][j] + r[i][j-1]
+        return r[m-1][n-1]
+
+#另一种方法是求组合，仅作为参考
+#不论怎么走都会走 m+n-2 步
+#一定有 m - 1 步是要向下走的，不用管什么时候向下走。
+#那么有几种走法呢？ 可以转化为，给你m + n - 2个不同的数，随便取m - 1个数，有几种取法。
+#但是直接求分子因为阶乘很容易就会溢出
+#所以要边除以分母，边往上乘
+class Solution:
+    def uniquePaths(self, m: int, n: int) -> int:
+        numerator = 1  # 分子
+        denominator = m - 1  # 分母
+        count = m - 1  # 计数器，表示剩余需要计算的乘积项个数
+        t = m + n - 2  # 初始乘积项
+        while count > 0:
+            numerator *= t  # 计算乘积项的分子部分
+            t -= 1  # 递减乘积项
+            while denominator != 0 and numerator % denominator == 0:
+                numerator //= denominator  # 约简分子
+                denominator -= 1  # 递减分母
+            count -= 1  # 计数器减1，继续下一项的计算
+        return numerator  # 返回最终的唯一路径数
+
