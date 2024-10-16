@@ -120,3 +120,38 @@ class Solution:
             count -= 1  # 计数器减1，继续下一项的计算
         return numerator  # 返回最终的唯一路径数
 
+
+#63. 不同路径 II https://leetcode.cn/problems/unique-paths-ii/submissions/573275252/
+#这次加了障碍物，思路不变，加了很多细节
+class Solution(object):
+    def uniquePathsWithObstacles(self, obstacleGrid):
+        """
+        :type obstacleGrid: List[List[int]]
+        :rtype: int
+        """
+	#若起点或终点是石头，则动不了
+        if obstacleGrid[0][0] or  obstacleGrid[len(obstacleGrid)-1][len(obstacleGrid[0])-1]:
+            return 0
+	#构建动态数组
+        r = [[0]*len(obstacleGrid[0]) for _ in range(len(obstacleGrid))]
+        for i in range(len(obstacleGrid[0])):
+		#这里注意，假如第一行中间有石头，则后边的都到不了，因为只能往右下走
+            if obstacleGrid[0][i]:
+                   
+                    break
+            else:r[0][i] = 1
+        for i in range(len(obstacleGrid)):
+		#同理第一列也是
+            if obstacleGrid[i][0]:
+                    break
+                    
+            else:r[i][0] = 1
+        for i in range(1,len(obstacleGrid)):
+            for j in range(1,len(obstacleGrid[0])):
+		#假如中间遇见石头则记为0即可
+                if obstacleGrid[i][j]:
+                    r[i][j] = 0 #continue也可
+                else:
+                    r[i][j] =  r[i-1][j] + r[i][j-1]
+        return r[len(obstacleGrid)-1][len(obstacleGrid[0])-1]
+
