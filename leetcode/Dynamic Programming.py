@@ -155,3 +155,28 @@ class Solution(object):
                     r[i][j] =  r[i-1][j] + r[i][j-1]
         return r[len(obstacleGrid)-1][len(obstacleGrid[0])-1]
 
+
+
+#343. 整数拆分 https://leetcode.cn/problems/integer-break/submissions/573578197/
+#本题核心在于思路
+#建立dp数组，第i个就是数字几的最大乘积
+#然后，每个数字从1到该数字-1遍历， 取两种情况的最大值：
+#第一种是 j*(i-j) 即将该数字i，拆分成两个数字求乘积
+#第二种是 j * r[i-j] 即该数字i 拆分成两个数字之后， 再将 i-j 拆分 的最大乘积
+#然后 再将当前 j 和记录的最大 r[i]比较，以更新最大值
+class Solution(object):
+    def integerBreak(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
+	# [1] * (n+1) 不用框起来，框起来成了2维数组
+        r = [1] * (n+1)
+	#因为要计算n的，所以上界是n+1
+	#而因为从2开始拆分有意义，所以2被初始化，动态规划从3开始
+        for  i in range(3,n+1):
+            for j in range(1,i):
+                r[i] = max(r[i],max(j*(i-j),j*r[i-j]))
+        return r[n]
+
+
