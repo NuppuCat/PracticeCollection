@@ -180,3 +180,27 @@ class Solution(object):
         return r[n]
 
 
+#不同的二叉搜索树 https://leetcode.cn/problems/unique-binary-search-trees/submissions/573783286/
+#本题在于思路和边界
+#思路是：一个树以不同的根节点分配左右树，每一种情况都是所有可能的左树的情况*右树可能的情况
+#而左右树的情况必然是现在树的子集，所以又可以用动态规划数组做
+class Solution(object):
+    def numTrees(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
+	#到n 所以数组长度n+1
+	#初始化0，因为要把每种情况的积相加
+        r = [0] * (n+1)
+	#空集也算一种
+        r[0] = 1
+	#初始化到0，就从1 开始遍历
+        for i in range(1,n+1):
+		#这里j，代表第几个元素作为头
+            for j in range(1,i+1):
+		# j-1表示左支分配的元素数，i-j表示右枝分配的元素数。
+		# r 代表最多的情况，所以相乘得到此种情况下的所有情况
+                r[i] += r[j-1]*r[i-j]
+        return r[n]
+
