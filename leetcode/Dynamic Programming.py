@@ -204,3 +204,38 @@ class Solution(object):
                 r[i] += r[j-1]*r[i-j]
         return r[n]
 
+
+
+
+
+
+#01背包 https://kamacoder.com/problempage.php?pid=1046
+#本题构建动态数组的思路很重要：
+#构建行是物品，列是背包容量的二维数组
+
+# input()接受输入字符串
+#split() 根据空格拆分字符串
+#map(int,..) 将列表中的每个元素转化为int
+n, bagweight = map(int, input().split())
+
+weight = list(map(int, input().split()))
+value = list(map(int, input().split()))
+#初始化
+dp = [[0] * (bagweight + 1) for _ in range(n)]
+#初始化第一个物品，即第一行的数值
+#当第weight[0]列之后，由于只有一个物品，所以价值均为物品价值
+for i in range(weight[0],bagweight + 1):
+    dp[0][i] = value[0]
+
+for i in range(1,n):
+    for j in range(bagweight+1):
+	#若背包容量小于当前物品，则最大价值等同于上面一格
+        if j<weight[i]:
+            dp[i][j] = dp[i-1][j]
+	#若可以容纳当前物品，则对比容纳前一物品最大价值和 空出当前物品空间后的 最大价值+当前物品价值
+        else:
+            dp[i][j] = max(dp[i-1][j],dp[i-1][j-weight[i]]+value[i])
+
+print(dp[n-1][bagweight])
+
+
