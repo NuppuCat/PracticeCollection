@@ -239,3 +239,34 @@ for i in range(1,n):
 print(dp[n-1][bagweight])
 
 
+#分割等和子集 https://leetcode.cn/problems/partition-equal-subset-sum/submissions/574231794/
+#本题是01背包降维后成滚动数组的问题
+#相当于是背包容量为 sum/2, 物品重量即物品价值的问题
+class Solution(object):
+    def canPartition(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: bool
+        """
+	#不能整除则说明肯定不能分成两个等和子集
+        if sum(nums)%2 ==1: return False
+        t = int(sum(nums)/2)
+	#dp数组为滚动数组，动态计算每加入一个物品，背包容量下的最大价值
+        dp = [0]* (t+1)
+	#挨个取出物品
+        for i in nums:
+		#倒序遍历更新数组
+		#倒序是为了不重复放入，如果正序， dp[i-j]+i 中，前项会先被赋值，后边序列会一直重复增加i 增大
+		#而每个i只能用一次。
+		#所以使用倒序遍历，在该物品层，物品只被放入一次
+            for j in range(t,i-1,-1):
+		#对比未加入物品 i 之前的最大价值 和 放入物品 i 的最大价值
+                dp[j] = max(dp[j],dp[j-i]+i)
+	#因为重量和价值等价，所以dp[t]即容量为t时，最大价值就是t
+	#小于t说明分割不了
+        if dp[t] == t: return True
+        return False
+
+
+
+
