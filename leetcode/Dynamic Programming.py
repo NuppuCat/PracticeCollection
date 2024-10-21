@@ -268,5 +268,50 @@ class Solution(object):
         return False
 
 
+#最后一块石头的重量II https://leetcode.cn/problems/last-stone-weight-ii/submissions/574507441/
+#感觉还是没抓住动态规划的要领
+#本题的问题应该看作尽可能将石头分成质量接近的两堆
+#这样就和上面的问题一致了
+#用dp记录各个容量下背包最大的价值
+#求出容量为数组和一半时的最大价值即可
+
+class Solution(object):
+    def lastStoneWeightII(self, stones):
+        """
+        :type stones: List[int]
+        :rtype: int
+        """
+        t = sum(stones)//2
+        dp = [0] * (t+1)
+
+        for i in stones:
+            for j in range(t,i-1,-1):
+                dp[j] = max(dp[j], dp[j-i]+i)
+	#求差获得分成最接近的两份的重量
+        a = sum(stones)-dp[t]
+        return abs(dp[t]-a)
+
+#不能简单的通过排序求差，因为问题的本质就是将数组分成和最接近的两组
+#而不是排序相减或者是找绝对值
+#[31,26,33,21,40] 会输出9，而正确的答案是33和40组合获得最接近151//2=75的73，去减其它数得到5
+class Solution(object):
+    def lastStoneWeightII(self, stones):
+        """
+        :type stones: List[int]
+        :rtype: int
+        """
+        print(stones)
+        if len(stones)<2:
+            a = stones[0]
+            return a
+        s = stones[:]
+        s.sort(reverse=True)
+        a = s[0]-s[1]
+        s.append(a)
+        
+        return self.lastStoneWeightII(s[2:])
+        
+
+
 
 
