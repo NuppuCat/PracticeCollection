@@ -310,6 +310,58 @@ class Solution(object):
         s.append(a)
         
         return self.lastStoneWeightII(s[2:])
+
+
+#0474.一和零 https://leetcode.cn/problems/ones-and-zeroes/submissions/575157244/
+#本题本质还是01背包，构建动态数组，记录横纵向容量价值（即子集长度）最大值
+#初始的想法
+class Solution(object):
+    def findMaxForm(self, strs, m, n):
+        """
+        :type strs: List[str]
+        :type m: int
+        :type n: int
+        :rtype: int
+        """
+	#做一个数组记录每个字符串的0和1
+        s = [[0] * 2 for _ in range(len(strs))]
+        for i in range(len(strs)):
+            for j in strs[i]:
+                if j=='0': s[i][0]+=1
+                elif j=='1': s[i][1]+=1
+        #构建dq
+	#这里注意方向，如果要按01方向遍历，则for中是m
+        dq = [[0] * (n+1) for _ in range(m+1)]
+        for k in range(len(s)):
+		#从大到小遍历容量，因为动态更新和更小容量的状态有关
+            for i in range(m,s[k][0]-1,-1):
+                for j in range(n,s[k][1]-1,-1):
+			#对比放入本物品 和不放入本物品 的价值
+                    dq[i][j] = max(dq[i-s[k][0]][j-s[k][1]] +1, dq[i][j])
+        return dq[m][n]
+ 
+#优雅版，性能提升40%
+class Solution(object):
+    def findMaxForm(self, strs, m, n):
+        """
+        :type strs: List[str]
+        :type m: int
+        :type n: int
+        :rtype: int
+        """
+	#构建dq数组
+        dq = [[0]*(n+1) for _ in range(m+1)]
+	#直接遍历物品，边遍历边更新
+        for s in strs:
+		#count函数统计字符
+            zc = s.count('0')
+            oc = s.count('1')
+		#动态更新
+            for i in range(m,zc-1,-1):
+                for j in range(n,oc-1,-1):
+                    dq[i][j] = max(dq[i][j], dq[i-zc][j-oc]+1)
+        return dq[m][n]
+        
         
 
 
