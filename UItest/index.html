@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sentiment Analysis</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      text-align: center;
+    }
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Sentiment Analysis</h1>
+    <input type="text" id="textInput" placeholder="Enter text here...">
+    <select id="modelSelect">
+      <option value="custom">Custom Model (DistilBERT)</option>
+      <option value="llama3">Llama 3</option>
+    </select>
+    <button id="analyzeButton">Analyze Sentiment</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const textInput = document.getElementById("textInput");
+    const modelSelect = document.getElementById("modelSelect");
+    const analyzeButton = document.getElementById("analyzeButton");
+    const resultDiv = document.getElementById("result");
+
+    analyzeButton.addEventListener("click", async () => {
+      const text = textInput.value.trim();
+      const model = modelSelect.value;
+
+      if (!text) {
+        resultDiv.innerHTML = "<p style='color: red;'>Please enter some text!</p>";
+        return;
+      }
+
+      // Call the backend API
+      try {
+        const response = await fetch("http://127.0.0.1:5000/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text, model }),
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          resultDiv.innerHTML = `
+            <p><strong>Sentiment:</strong> ${data.sentiment}</p>
+            <p><strong>Confidence Score:</strong> ${data.score.toFixed(2)}</p>
+          `;
+        } else {
+          resultDiv.innerHTML = `<p style='color: red;'>Error: ${data.error}</p>`;
+        }
+      } catch (error) {
+        resultDiv.innerHTML = `<p style='color: red;'>Failed to fetch data from the server.</p>`;
+      }
+    });
+  </script>
+</body>
+</html>
