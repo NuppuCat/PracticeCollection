@@ -4,8 +4,7 @@ Errors encountered & fixes if applied
 
 all bugs fiexd as the notebook
 
-1.
-#bug: module 'rouge_score' has no attribute '__version__'
+1.#bug: module 'rouge_score' has no attribute '__version__'
 
 # solution
 from importlib.metadata import version
