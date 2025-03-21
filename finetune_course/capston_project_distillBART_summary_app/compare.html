@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text Summary</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      max-width: 700px;
+      width: 100%;
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 30px;
+      color: #333;
+      font-weight: 600;
+    }
+    textarea {
+      width: 100%;
+      height: 250px;
+      padding: 20px;
+      font-size: 18px;
+      line-height: 1.5;
+      border-radius: 8px;
+      border: 2px solid #ddd;
+      color: #333;
+      background-color: #fafafa;
+      resize: none;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.3s ease, background-color 0.3s ease;
+    }
+    textarea:focus {
+      border-color: #007bff;
+      background-color: #fff;
+    }
+    button {
+      width: 100%;
+      padding: 18px;
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      background-color: #007bff;
+      color: white;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .result {
+      margin-top: 30px;
+      font-size: 18px;
+      color: #333;
+      font-weight: 500;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .error {
+      color: red;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Text Summary Generator</h1>
+    <textarea id="textInput" placeholder="Enter text here..."></textarea>
+    
+    <button id="analyzeButton">Generate Summary from distilled model</button>
+    <div class="result" id="result"></div>
+    <button id="analyzeButton2">Generate Summary from teacher model</button>
+    <div class="result" id="result2"></div>
+    <button id="analyzeButton3">Generate Summary from original student model</button>
+    <div class="result" id="result3"></div>
+    <div id="error" class="error"></div>
+  </div>
+
+  <script>
+    const textInput = document.getElementById("textInput");
+    const analyzeButton = document.getElementById("analyzeButton");
+    const resultDiv = document.getElementById("result");
+    const errorDiv = document.getElementById("error");
+    const analyzeButton2 = document.getElementById("analyzeButton2");
+    const analyzeButton3 = document.getElementById("analyzeButton3"); 
+    const resultDiv2 = document.getElementById("result2");
+
+    const resultDiv3 = document.getElementById("result3");
+   	
+    analyzeButton.addEventListener("click", async () => {
+      const text = textInput.value.trim();
+      errorDiv.textContent = '';  // Reset error message
+
+      if (!text) {
+        result.innerHTML = '';
+        errorDiv.textContent = 'Please enter some text!';
+        return;
+      }
+
+      // Call the backend API
+      try {
+        const response = await fetch("http://127.0.0.1:5000/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          resultDiv.innerHTML = `<strong>runtime:</strong>${data.runtime} s<br><strong>modelsize:</strong>${data.modelsize} MB<br><strong>Summary:</strong><p>${data.summary}</p>`;
+        } else {
+          result.innerHTML = '';
+          resultDiv.textContent = `Error: ${data.error}`;
+        }
+      } catch (error) {
+        resultDiv.innerHTML = '';
+        errorDiv.textContent = 'Failed to fetch data from the server.';
+      }
+    });
+    analyzeButton2.addEventListener("click", async () => {
+      const text = textInput.value.trim();
+      errorDiv.textContent = '';  // Reset error message
+
+      if (!text) {
+        resultDiv2.innerHTML = '';
+        errorDiv.textContent = 'Please enter some text!';
+        return;
+      }
+
+      // Call the backend API
+      try {
+        const response = await fetch("http://127.0.0.1:5000/analyze2", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          resultDiv2.innerHTML = `<strong>runtime:</strong>${data.runtime} s<br><strong>modelsize:</strong>${data.modelsize} MB<br><strong>Summary:</strong><p>${data.summary}</p>`;
+        } else {
+          resultDiv2.innerHTML = '';
+          errorDiv.textContent = `Error: ${data.error}`;
+        }
+      } catch (error) {
+        resultDiv2.innerHTML = '';
+        errorDiv.textContent = 'Failed to fetch data from the server.';
+      }
+    });
+    analyzeButton3.addEventListener("click", async () => {
+      const text = textInput.value.trim();
+      errorDiv.textContent = '';  // Reset error message
+
+      if (!text) {
+        resultDiv3.innerHTML = '';
+        errorDiv.textContent = 'Please enter some text!';
+        return;
+      }
+
+      // Call the backend API
+      try {
+        const response = await fetch("http://127.0.0.1:5000/analyze3", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          resultDiv3.innerHTML = `<strong>runtime:</strong>${data.runtime} s<br><strong>modelsize:</strong>${data.modelsize} MB<br><strong>Summary:</strong><p>${data.summary}</p>`;
+        } else {
+          resultDiv3.innerHTML = '';
+          errorDiv.textContent = `Error: ${data.error}`;
+        }
+      } catch (error) {
+        resultDiv3.innerHTML = '';
+        errorDiv.textContent = 'Failed to fetch data from the server.';
+      }
+    });
+
+  </script>
+</body>
+</html>
